@@ -2,6 +2,10 @@
 
 Please read the [workflow guide](https://github.com/NUS-Fintech-Society/BC_DAO_frontend/blob/master/docs/Workflow.md) before getting started.
 
+## Getting Started
+
+Start by cloning this directory and running `npm install`
+
 ## Available Scripts
 
 In the project directory, you can run:
