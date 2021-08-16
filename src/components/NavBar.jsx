@@ -2,11 +2,11 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router";
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Vote", href: "/vote", current: false },
+  { name: "Dashboard", href: "/" },
+  { name: "Vote", href: "/vote" },
 ];
 
 function classNames(...classes) {
@@ -14,6 +14,8 @@ function classNames(...classes) {
 }
 
 export default function NabBar() {
+  const location = useLocation();
+
   return (
     <Disclosure as="nav" className="bg-gray-100">
       {({ open }) => (
@@ -38,19 +40,21 @@ export default function NabBar() {
                 <div className="hidden sm:block sm:ml-6">
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
-                      <Link
+                      <a
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current
+                          location.pathname === item.href
                             ? "bg-gray-900 text-white"
                             : "text-gray-600 hover:bg-gray-500 hover:text-white",
                           "px-3 py-2 rounded-md text-sm font-medium"
                         )}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={
+                          location.pathname === item.href ? "page" : undefined
+                        }
                       >
                         {item.name}
-                      </Link>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -138,12 +142,14 @@ export default function NabBar() {
                   key={item.name}
                   href={item.href}
                   className={classNames(
-                    item.current
+                    location.pathname === item.href
                       ? "bg-gray-900 text-white"
                       : "text-gray-600 hover:bg-gray-500 hover:text-white",
                     "block px-3 py-2 rounded-md text-base font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={
+                    location.pathname === item.href ? "page" : undefined
+                  }
                 >
                   {item.name}
                 </a>
