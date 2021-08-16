@@ -2,6 +2,12 @@
 
 Please read the [workflow guide](https://github.com/NUS-Fintech-Society/BC_DAO_frontend/blob/master/docs/Workflow.md) before getting started.
 
+## Getting Started
+
+Start by cloning this directory and running `npm install`
+
+On VS Code, install `prettier` as we use this to standardize the formatting.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -14,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-Note: we use [CRACO](https://github.com/gsoft-inc/craco) to run our app. 
+Note: we use [CRACO](https://github.com/gsoft-inc/craco) to run our app.
 
 ### `yarn test`
 
