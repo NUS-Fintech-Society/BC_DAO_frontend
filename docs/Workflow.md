@@ -11,7 +11,6 @@ The team will follow a modified version of the
 [Scrum workflow](https://www.scrumstudy.com/whyscrum/scrum-phases-and-processes).
 We will have two weekly sprints meetings where we decide on what features to start development on.
 
-
 ## **Branching Workflow**
 
 The team will adopt the
@@ -23,10 +22,10 @@ PR into the main branch. Typically, the command to do so would be as such (the
 second step is only necessary for the first time):
 
 ```
-git checkout main
-git remote add origin https://github.com/notawakestudio/nusGames.git
+git checkout master
+git remote add origin https://github.com/NUS-Fintech-Society/BC_DAO_frontend
 git fetch origin
-git merge origin/main
+git merge origin/master
 git checkout -b featured-branch
 git push
 ```
