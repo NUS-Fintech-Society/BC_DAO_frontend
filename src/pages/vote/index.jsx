@@ -1,11 +1,12 @@
 import React from "react";
-import NavBar from "../../components/NavBar";
+import NavBar from "../../components/Layout/NavBar";
+import VoteList from "../../components/Vote/VoteList";
 
 export default function vote() {
   return (
-    <div>
+    <div className="w-full h-full">
       <NavBar />
-      TEST
+      <VoteList />
     </div>
   );
 }

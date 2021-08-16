@@ -1,11 +1,18 @@
 import React from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/Layout/NavBar";
 
 export default function index() {
   return (
-    <div>
-      <NavBar />
-      test
-    </div>
+    <>
+      <head>
+        <title>Home</title>
+        <meta name="description" content="home" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <div>
+        <NavBar />
+        <div>home page</div>
+      </div>
+    </>
   );
 }
