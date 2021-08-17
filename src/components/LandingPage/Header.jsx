@@ -7,7 +7,7 @@ export default function Header() {
         Fintech Society
       </div>
       <a href="https://fintechsociety.comp.nus.edu.sg/">
-        <button className="text-base bg-black rounded-md font-bold text-white pt-2.5 pb-2.5 pl-5 pr-5 mt-4">
+        <button className="text-base bg-black rounded-md font-semibold text-white pt-2.5 pb-2.5 pl-5 pr-5 mt-4">
           Click here
         </button>
       </a>
