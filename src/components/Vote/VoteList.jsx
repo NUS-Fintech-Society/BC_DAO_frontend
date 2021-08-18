@@ -6,12 +6,20 @@ const sample_content = {
   title: "Content header",
   description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
-  link: "Content link",
   userId: 2,
   date: 1629138256120,
 };
 
-const vote_list = [sample_content, sample_content];
+const sample_content_2 = {
+  id: 2,
+  title: "Content header 2",
+  description:
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
+  userId: 5,
+  date: 1629138256120,
+};
+
+const vote_list = [sample_content, sample_content_2];
 
 export default function VoteList() {
   return (

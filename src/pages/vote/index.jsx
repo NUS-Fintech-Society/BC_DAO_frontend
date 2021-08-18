@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
 import NavBar from "../../components/Layout/NavBar";
 import VoteList from "../../components/Vote/VoteList";
+import VoteDetail from "../../components/Vote/VoteDetail";
+import NewProposal from "../../components/Vote/NewProposal";
 
 export default function Vote() {
   let { path, url } = useRouteMatch();
@@ -22,7 +24,12 @@ export default function Vote() {
             </div>
             <VoteList />
           </Route>
-          <Route path={`${path}/:id`}>to the place</Route>
+          <Route path={`${path}/new-proposal`}>
+            <NewProposal />
+          </Route>
+          <Route path={`${path}/:id`}>
+            <VoteDetail />
+          </Route>
         </Switch>
       </div>
     </div>
