@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
-import NavBar from "../../components/Layout/NavBar";
-import VoteList from "../../components/Vote/VoteList";
-import VoteDetail from "../../components/Vote/VoteDetail";
-import NewProposal from "../../components/Vote/NewProposal";
+import NavBar from "../components/Layout/NavBar";
+import VoteList from "../components/Vote/VoteList";
+import VoteDetail from "../components/Vote/VoteDetail";
+import NewProposal from "../components/Vote/NewProposal";
 
 export default function Vote() {
   let { path, url } = useRouteMatch();
