@@ -7,6 +7,8 @@ import * as Yup from "yup";
 const formTypes = [
   { label: "Single-Select", value: "single" },
   { label: "Multiple-Select", value: "multiple" },
+  { label: "Loss Voting", value: "loss" },
+  { label: "Allocation Proposal", value: "allocation" },
 ];
 
 let initialType = "single";
