@@ -3,7 +3,7 @@ import { Link, useRouteMatch } from "react-router-dom";
 import { getUser, getReadableDate } from "./voteUtils";
 
 export default function VoteListItem({ content }) {
-  let { path, url } = useRouteMatch();
+  let { url } = useRouteMatch();
 
   return (
     <div className="border border-gray-500 rounded-md w-full bg-gray-100 hover:bg-indigo-50">

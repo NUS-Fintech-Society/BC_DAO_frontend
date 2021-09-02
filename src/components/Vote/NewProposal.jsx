@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
 import { Field, FieldArray, Form, Formik } from "formik";
+import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -9,11 +9,13 @@ const formTypes = [
   { label: "Multiple-Select", value: "multiple" },
 ];
 
+let initialType = "single";
+
 // add number to options
 const initialValues = {
   title: "",
   content: "",
-  type: "",
+  type: initialType,
   options: [{ id: "", label: "" }],
 };
 
@@ -21,11 +23,10 @@ const finalValues = {
   //need number of options that can be passed
 };
 
-const proposalSchema = Yup.object({
-  title: Yup.string().required(""),
-  content: Yup.string().required(""),
-  type: Yup.string().required(""),
-  options: Yup.array().required(""),
+const proposalSchema = Yup.object().shape({
+  title: Yup.string().required("Required"),
+  content: Yup.string().required("Required"),
+  options: Yup.array().min(2, "More options needed"),
 });
 
 export default function NewProposal() {
@@ -45,12 +46,14 @@ export default function NewProposal() {
         <Formik
           initialValues={initialValues}
           validationSchema={proposalSchema}
-          onSubmit={(values) => {
+          onSubmit={(values, actions) => {
             console.log(JSON.stringify(values));
+            actions.setSubmitting(false);
           }}
         >
-          {({ values }) => (
+          {({ values, errors, touched }) => (
             <Form>
+              {(values.type = initialType)}
               <div className="flex flex-col text-gray-600 lg:flex-row lg:space-x-4">
                 <div className="flex-col w-full">
                   <Field
@@ -59,6 +62,11 @@ export default function NewProposal() {
                     label="Title"
                     placeholder="Question"
                   />
+                  <div className="class">
+                    {errors.title && touched.title ? (
+                      <div>{errors.title}</div>
+                    ) : null}
+                  </div>
                   <Field
                     name="content"
                     component={CustomLongTextInput}
@@ -111,14 +119,13 @@ export default function NewProposal() {
                   </div>
                   <div className="p-4">
                     <Field
+                      as="select"
                       name="type"
                       component={CustomButtonInput}
-                      label="type"
-                      options={formTypes}
                     />
                     <button
                       type="submit"
-                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-indigo-800 focus:border-purple-200 active:border-grey-900 active:text-grey-900 transition-all"
+                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all"
                     >
                       Publish
                     </button>
@@ -170,7 +177,8 @@ const CustomOptionInput = ({ field, ...props }) => (
 );
 
 function CustomButtonInput({ field, ...props }) {
-  let [isOpen, setIsOpen] = useState(true);
+  let [isOpen, setIsOpen] = useState(false);
+  let buttonRef = useRef(formTypes.map(() => React.createRef()));
 
   function closeModal() {
     setIsOpen(false);
@@ -180,26 +188,50 @@ function CustomButtonInput({ field, ...props }) {
     setIsOpen(true);
   }
 
+  function setType(type) {
+    field.value = type.value;
+    initialType = type.value;
+    closeModal();
+  }
+
+  // Get the label corresponding to the value in formTypes
+  function getLabel() {
+    try {
+      return formTypes.find((type) => type.value === field.value).label;
+    } catch (error) {
+      return "Select Type";
+    }
+  }
+
+  function getValue() {
+    return field.value;
+  }
+
+  // Get the position of the label in formTypes using value
+  function getPosition() {
+    console.log(field.value);
+    return formTypes.findIndex((type) => type.value === field.value);
+  }
+
   return (
     <>
       <div className="flex flex-col w-full">
         <button
-          type="radio"
-          {...field}
-          {...props}
-          className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-indigo-800 focus:border-purple-200 active:border-grey-900 active:text-grey-900 transition-all"
+          className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all"
           onClick={openModal}
         >
-          Type
+          {getLabel()}
         </button>
       </div>
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={closeModal}
+          initialFocus={buttonRef.current[getPosition()]}
         >
           <div className="min-h-screen px-4 text-center">
+            {/* Allow for clicking outside to close modal*/}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -231,22 +263,24 @@ function CustomButtonInput({ field, ...props }) {
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
+                  className="text-lg font-medium leading-6 text-gray-900 cursor-default"
                 >
                   Select Type
                 </Dialog.Title>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500">Type 1</p>
-                </div>
-
-                <div className="mt-4">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModal}
-                  >
-                    Exit
-                  </button>
+                  {formTypes.map((type, index) => (
+                    <button
+                      key={index}
+                      value={type.value}
+                      {...field}
+                      {...props}
+                      ref={buttonRef.current[index]}
+                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
+                      onClick={() => setType(type)}
+                    >
+                      {type.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </Transition.Child>
