@@ -51,6 +51,8 @@ export default function NewProposal() {
           onSubmit={(values, actions) => {
             console.log(JSON.stringify(values));
             actions.setSubmitting(false);
+            // getProposal(web3);
+            console.log("proposal data")
           }}
         >
           {({ values, errors, touched }) => (

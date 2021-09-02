@@ -7,7 +7,6 @@ import NewProposal from "../components/Vote/NewProposal";
 
 export default function Vote() {
   let { path, url } = useRouteMatch();
-
   return (
     <div className="w-full h-full">
       <NavBar />
