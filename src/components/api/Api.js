@@ -18,15 +18,13 @@ export async function uploadProposal(text) {
   const added = await ipfs.add(text, (err, ipfsHash) => {
     console.log(err, ipfsHash);
   });
-  console.log(added);
-  //console.log(added.path);  //get Hash
+  return added.path;
 }
 
 export async function retrieveProposal(proposalHash) {
-  const taken = await fetch("https://ipfs.io/ipfs/" + proposalHash);
-  console.log("hi");
-  console.log(taken);
-  console.log(taken.text);
+  return await fetch("http://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
+    x.json()
+  );
 }
 
 export function getContract(web3) {
@@ -63,13 +61,19 @@ export async function initialiseUser(contract, account, userAccount) {
 export async function createProposal(
   contract,
   account,
-  ipfsHash,
   numOfOptions,
   minStakeValue,
   isLossVoting,
   isAllocationProposal
 ) {
-  //push proposal to ipfs
+  const ipfsHash = await uploadProposal(
+    JSON.stringify({
+      numOfOptions,
+      minStakeValue,
+      isLossVoting,
+      isAllocationProposal,
+    })
+  );
   try {
     return await contract.methods
       .createProposal(

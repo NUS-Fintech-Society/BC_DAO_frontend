@@ -52,7 +52,7 @@ function App() {
         // </button>
         // <button
         //   onClick={async () => {
-        //     await uploadProposal("Uploaded Text to IPFS");
+        //     await uploadProposal("Troll text test ");
         //   }}
         // >
         //   TestButton1
