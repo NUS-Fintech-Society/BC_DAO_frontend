@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages";
 import Vote from "./pages/vote";
-import { useWeb3 } from "@openzeppelin/network/react";
+import { useWeb3 } from "@openzeppelin/network/lib/react";
 import { getContract, getProposalHashes } from "./components/api/Api";
 const { projectId } = require("./secrets.json");
 
@@ -20,9 +20,7 @@ function App() {
 
   return (
     <div>
-      {
-        // move this to navbar
-      }
+      {/* move to nav */}
       {accounts && accounts.length ? (
         <div>
           <div>{networkId === 3 ? accounts[0] : "Get on Ropsten Testnet"}</div>
