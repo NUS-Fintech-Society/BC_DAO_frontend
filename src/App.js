@@ -33,23 +33,23 @@ function App() {
   return (
     <div>
       {
-        // <button
-        //   onClick={async () => {
-        //     console.log(
-        //       await createProposal(
-        //         getContract(web3),
-        //         accounts[0],
-        //         "testing1",
-        //         5,
-        //         0,
-        //         false,
-        //         false
-        //       )
-        //     );
-        //   }}
-        // >
-        //   TestButton
-        // </button>
+        <button
+          onClick={async () => {
+            console.log(
+              await createProposal(
+                getContract(web3),
+                accounts[0],
+                "testing2",
+                5,
+                0,
+                false,
+                false
+              )
+            );
+          }}
+        >
+          TestButton
+        </button>
         // <button
         //   onClick={async () => {
         //     await uploadProposal("Uploaded Text to IPFS");
@@ -57,13 +57,13 @@ function App() {
         // >
         //   TestButton1
         // </button>
-        <button
-          onClick={async () => {
-            retrieveProposal("QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3");
-          }}
-        >
-          TestButton2
-        </button>
+        // <button
+        //   onClick={async () => {
+        //     retrieveProposal("QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3");
+        //   }}
+        // >
+        //   TestButton2
+        // </button>
       }
       {accounts && accounts.length ? (
         <div>

@@ -68,7 +68,6 @@ export async function createProposal(
   isLossVoting,
   isAllocationProposal
 ) {
-  console.log(contract);
   //push proposal to ipfs
   try {
     return await contract.methods
