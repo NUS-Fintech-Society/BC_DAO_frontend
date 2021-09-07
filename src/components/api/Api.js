@@ -1,4 +1,32 @@
+// const { ipfsProjectId } = require("../../../src/secrets.json");
+// const { ipfsProjectSecret } = require("../../../src/secrets.json");
+
 const { address, abi } = require("./contract.json");
+const ipfsClient = require("ipfs-http-client");
+
+// const auth =
+//   "Basic " +
+//   Buffer.from(ipfsProjectId + ":" + ipfsProjectSecret).toString("base64");
+
+const ipfs = ipfsClient.create({
+  host: "ipfs.infura.io",
+  port: 5001,
+  protocol: "https",
+});
+
+export async function uploadProposal(text) {
+  const added = await ipfs.add(text, (err, ipfsHash) => {
+    console.log(err, ipfsHash);
+  });
+  console.log(added);
+  //console.log(added.path);  //get Hash
+}
+
+export function retrieveProposal(proposalHash) {
+  const taken = ipfs.cat(proposalHash);
+  console.log(taken);
+  console.log(taken.text);
+}
 
 export function getContract(web3) {
   return new web3.eth.Contract(abi, address);

@@ -18,6 +18,8 @@ import {
   createProposal,
   setProposalStatus,
   vote,
+  uploadProposal,
+  retrieveProposal,
 } from "./components/api/Api";
 const { projectId } = require("./secrets.json");
 
@@ -50,20 +52,18 @@ function App() {
         // </button>
         // <button
         //   onClick={async () => {
-        //     console.log(
-        //       await vote(getContract(web3), accounts[0], "testing1", 2, 2)
-        //     );
+        //     await uploadProposal("Uploaded Text to IPFS");
         //   }}
         // >
         //   TestButton1
         // </button>
-        // <button
-        //   onClick={async () => {
-        //     console.log(await getProposalInfo(getContract(web3), "testing1"));
-        //   }}
-        // >
-        //   TestButton2
-        // </button>
+        <button
+          onClick={async () => {
+            retrieveProposal("QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3");
+          }}
+        >
+          TestButton2
+        </button>
       }
       {accounts && accounts.length ? (
         <div>
