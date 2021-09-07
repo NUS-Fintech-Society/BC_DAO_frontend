@@ -22,8 +22,9 @@ export async function uploadProposal(text) {
   //console.log(added.path);  //get Hash
 }
 
-export function retrieveProposal(proposalHash) {
-  const taken = ipfs.cat(proposalHash);
+export async function retrieveProposal(proposalHash) {
+  const taken = await fetch("https://ipfs.io/ipfs/" + proposalHash);
+  console.log("hi");
   console.log(taken);
   console.log(taken.text);
 }
