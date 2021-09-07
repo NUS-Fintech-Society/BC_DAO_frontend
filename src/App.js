@@ -8,7 +8,19 @@ import {
 import Home from "./pages";
 import Vote from "./pages/vote";
 import { useWeb3 } from "@openzeppelin/network/react";
-import { getContract, getProposalHashes } from "./components/api/Api";
+import {
+  getContract,
+  getProposalHashes,
+  getProposalInfo,
+  getAllProposals,
+  getVotesForOption,
+  initialiseUser,
+  createProposal,
+  setProposalStatus,
+  vote,
+  uploadProposal,
+  retrieveProposal,
+} from "./components/api/Api";
 const { projectId } = require("./secrets.json");
 
 function App() {
@@ -21,7 +33,39 @@ function App() {
   return (
     <div>
       {
-        // move this to navbar
+        // <button
+        //   onClick={async () => {
+        //     console.log(
+        //       await createProposal(
+        //         getContract(web3),
+        //         accounts[0],
+        //         "testing2",
+        //         5,
+        //         0,
+        //         false,
+        //         false
+        //       )
+        //     );
+        //   }}
+        // >
+        //   TestButton
+        // </button>
+        // <button
+        //   onClick={async () => {
+        //     await uploadProposal("Troll text test ");
+        //   }}
+        // >
+        //   TestButton1
+        // </button>
+        <button
+          onClick={async () => {
+            await retrieveProposal(
+              "QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3"
+            );
+          }}
+        >
+          TestButton2
+        </button>
       }
       {accounts && accounts.length ? (
         <div>
