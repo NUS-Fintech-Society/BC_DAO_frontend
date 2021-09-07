@@ -1,8 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router";
+import { useWeb3 } from "@openzeppelin/network/lib/react";
+import { projectId } from "../../secrets.json";
 
 const navigation = [
   { name: "Dashboard", href: "/" },
@@ -14,7 +16,56 @@ function classNames(...classes) {
 }
 
 export default function NabBar() {
+  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const { lib: web3, networkId, accounts, providerName } = web3Context;
+
+  const requestAuth = (web3Context) => web3Context.requestAuth();
+  const requestAccess = useCallback(() => requestAuth(web3Context), []);
   const location = useLocation();
+
+  function getAccountHash() {
+    if (accounts && accounts.length && networkId === 3) {
+      return accounts[0];
+    } else {
+      return false;
+    }
+  }
+
+  function getShortAccountHash() {
+    const accountHash = getAccountHash();
+    if (accountHash) {
+      return (
+        accountHash.slice(0, 6) +
+        "..." +
+        accountHash.slice(-4, accountHash.length)
+      );
+    } else {
+      return "Invalid Hash";
+    }
+  }
+
+  function checkAccount() {
+    if (accounts && accounts.length) {
+      return (
+        <div className="block px-4 py-2 w-full text-left cursor-pointer">
+          <span> Logged in as </span>
+          <span className="font-semibold text-gray-500">
+            {getShortAccountHash()}
+          </span>
+        </div>
+      );
+    }
+    if (!!networkId && providerName !== "infura") {
+      return (
+        <button
+          className="block px-4 py-2 w-full text-left"
+          onClick={requestAccess}
+        >
+          Login
+        </button>
+      );
+    }
+  }
 
   return (
     <Disclosure as="nav" className="bg-gray-100">
@@ -60,6 +111,11 @@ export default function NabBar() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                {/* Account Hash */}
+                <div className="mr-3 text-gray-400 font-semibold text-sm">
+                  {checkAccount() ? getShortAccountHash() : null}
+                </div>
+
                 {/* Bell notifications */}
                 <button className="bg-gray-300 p-1 rounded-full text-gray-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                   <span className="sr-only">View notifications</span>
@@ -117,15 +173,14 @@ export default function NabBar() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="/sign-out"
+                          <div
                             className={classNames(
                               active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
+                              "text-sm text-gray-700"
                             )}
                           >
-                            Sign out
-                          </a>
+                            {checkAccount()}
+                          </div>
                         )}
                       </Menu.Item>
                     </Menu.Items>

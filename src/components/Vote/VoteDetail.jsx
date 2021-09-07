@@ -11,12 +11,29 @@ const sample_content = {
   isActive: true,
   type: "single",
   options: [
-    { id: "1", label: "1" },
-    { id: "2", label: "2" },
-    { id: "3", label: "3" },
-    { id: "4", label: "4" },
+    { id: "1", label: "Disagree" },
+    { id: "2", label: "10% per transaction" },
+    { id: "3", label: "20% per transaction" },
+    { id: "4", label: "30% per transaction" },
+    { id: "5", label: "50% per transaction" },
   ],
 };
+
+const collected_votes = [
+  { address: "China.eth", choice: "30% per transaction", amount: "10" },
+  { address: "0x69AB...6e88", choice: "30% per transaction", amount: "10" },
+  { address: "0x42AB...2e81", choice: "Disagree", amount: "10" },
+  { address: "0x090C...6e99", choice: "Disagree", amount: "500" },
+  { address: "0x67FQ...5e78", choice: "50% per transaction", amount: "69" },
+];
+
+const current_results = [
+  { choice: "Author", percentage: "50.90" },
+  { choice: "IPFS", percentage: "20" },
+  { choice: "Voting system", percentage: "10" },
+  { choice: "Start date", percentage: "5" },
+  { choice: "End date", percentage: "5" },
+];
 
 export default function VoteDetail() {
   let { params } = useRouteMatch();
@@ -24,8 +41,8 @@ export default function VoteDetail() {
   const content = sample_content;
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto p-2 px-4 ">
-      <div className="space-y-8">
+    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6">
+      <div className="flex flex-col space-y-8 w-full">
         <div className="space-y-4">
           <Link
             to="/vote"
@@ -63,8 +80,8 @@ export default function VoteDetail() {
             {content.description}
           </div>
         </div>
-        <div className="flex-col lg:w-96 bg-white rounded-xl border border-gray-200">
-          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-4 rounded-t-lg font-bold text-xl">
+        <div className="flex-col bg-white rounded-xl border border-gray-200">
+          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
             Cast your vote
           </div>
           <div className="p-4">
@@ -84,7 +101,90 @@ export default function VoteDetail() {
             </button>
           </div>
         </div>
+        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+            Votes
+          </div>
+          <div className="flex flex-col">
+            {collected_votes.map((vote, index) => (
+              <VoteItem
+                key={index}
+                address={vote.address}
+                choice={vote.choice}
+                amount={vote.amount}
+              />
+            ))}
+          </div>
+          <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
+            See More
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col xl:w-96 space-y-6">
+        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+            Information
+          </div>
+          <div className="p-4 flex flex-col space-y-2">
+            <InformationItem title="Author" value="Johnny" />
+            <InformationItem title="IPFS" value="#QmcJiUj" />
+            <InformationItem title="Voting system" value="Single Choice" />
+            <InformationItem title="Start date" value="test" />
+            <InformationItem title="End date" value="test" />
+          </div>
+        </div>
+        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+            Current Results
+          </div>
+          <div className="p-4 flex flex-col space-y-2">
+            {current_results.map((result, index) => (
+              <ResultItem
+                key={index}
+                choice={result.choice}
+                percentage={result.percentage}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+const VoteItem = ({ address, choice, amount }) => {
+  return (
+    <div className="grid grid-cols-3 text-base w-full text-center font-semibold text-gray-800 border-b-2 border-indigo-100 py-4 px-6">
+      <div className="mr-auto">{address}</div>
+      <div className="">{choice}</div>
+      <div className="ml-auto">{amount}</div>
+    </div>
+  );
+};
+
+const InformationItem = ({ title, value }) => {
+  return (
+    <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
+      <div className="class">{title}</div>
+      <div className="text-gray-700">{value}</div>
+    </div>
+  );
+};
+
+const ResultItem = ({ choice, percentage }) => {
+  return (
+    <div className="flex flex-col">
+      <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
+        <div className="class">{choice}</div>
+        <div className="text-gray-700">{percentage}%</div>
+      </div>
+      <div className="shadow-lg">
+        <div className="w-full h-1 rounded-full bg-gray-200"></div>
+        <div
+          className="w-full h-1 rounded-full bg-indigo-600"
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
