@@ -41,7 +41,7 @@ export default function VoteDetail() {
   const content = sample_content;
 
   return (
-    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6">
+    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6 mb-10">
       <div className="flex flex-col space-y-8 w-full">
         <div className="space-y-4">
           <Link

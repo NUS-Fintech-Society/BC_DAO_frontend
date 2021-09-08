@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages";
 import Vote from "./pages/vote";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
