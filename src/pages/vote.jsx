@@ -16,7 +16,7 @@ export default function Vote() {
             <div className="flex flex-row items-center justify-between px-4 ">
               <div className="text-4xl text-gray-700 my-4">Proposals</div>
               <Link to={`${url}/new-proposal`}>
-                <div className="bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+                <div className="bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-indigo-100">
                   New Proposal
                 </div>
               </Link>
