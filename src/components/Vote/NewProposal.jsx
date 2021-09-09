@@ -2,8 +2,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Field, FieldArray, Form, Formik } from "formik";
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { retrieveProposal } from "../api/Api";
 
 const formTypes = [
   { label: "Loss Voting", value: "loss" },
@@ -55,6 +56,16 @@ export default function NewProposal() {
           </Link>
         </div>
       </div>
+      <button
+        onClick={async () => {
+          const temp = await retrieveProposal(
+            "QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3"
+          );
+          console.log(JSON.stringify(temp));
+        }}
+      >
+        TestButton2
+      </button>
       <div className="max-w-7xl x-auto px-8 py-2">
         <Formik
           initialValues={initialValues}

@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
+import { getReadableDate } from "./voteUtils";
 
 const sample_content = {
   id: 1,
@@ -8,9 +9,10 @@ const sample_content = {
   description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
   userId: 2,
-  date: 1629138256120,
+  startDate: 1629138256120,
+  endDate: 1631172040787,
   isActive: true,
-  type: "single",
+  type: "loss",
   options: [
     { id: "1", label: "Disagree" },
     { id: "2", label: "10% per transaction" },
@@ -196,11 +198,17 @@ export default function VoteDetail() {
             Information
           </div>
           <div className="p-4 flex flex-col space-y-2">
-            <InformationItem title="Author" value="Johnny" />
+            <InformationItem title="Author" value={content.userId} />
             <InformationItem title="IPFS" value="#QmcJiUj" />
-            <InformationItem title="Voting system" value="Single Choice" />
-            <InformationItem title="Start date" value="test" />
-            <InformationItem title="End date" value="test" />
+            <InformationItem title="Voting system" value={content.type} />
+            <InformationItem
+              title="Start date"
+              value={getReadableDate(content.startDate)}
+            />
+            <InformationItem
+              title="End date"
+              value={getReadableDate(content.endDate)}
+            />
           </div>
         </div>
         <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">

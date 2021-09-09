@@ -18,10 +18,12 @@ function classNames(...classes) {
 export default function NabBar() {
   //Web 3 Init and info
   const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
-  const { lib: web3, networkId, accounts, providerName } = web3Context;
+  const { networkId, accounts, providerName } = web3Context;
 
-  const requestAuth = (web3Context) => web3Context.requestAuth();
-  const requestAccess = useCallback(() => requestAuth(web3Context), []);
+  const requestAccess = useCallback(
+    () => web3Context.requestAuth(),
+    [web3Context]
+  );
   const location = useLocation();
 
   //Toast info
