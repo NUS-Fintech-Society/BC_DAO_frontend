@@ -1,10 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { useWeb3 } from "@openzeppelin/network/lib/react";
 import { Field, FieldArray, Form, Formik } from "formik";
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { retrieveProposal } from "../api/Api";
+import { getAllProposals, getContract } from "../api/Api";
+import projectId from "../../secrets.json";
 
 const formTypes = [
   { label: "Loss Voting", value: "loss" },
@@ -32,6 +35,9 @@ const proposalSchema = Yup.object().shape({
 });
 
 export default function NewProposal() {
+  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const { lib: web3, networkId, accounts, providerName } = web3Context;
+
   //Toast for error messages
   const errorNotification = (error) =>
     toast.info(error, {
@@ -58,9 +64,7 @@ export default function NewProposal() {
       </div>
       <button
         onClick={async () => {
-          const temp = await retrieveProposal(
-            "QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3"
-          );
+          const temp = await getAllProposals(getContract(web3));
           console.log(JSON.stringify(temp));
         }}
       >
