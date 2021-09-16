@@ -1,10 +1,10 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useCallback } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import { projectId } from "../../secrets.json";
+import { ToastContainer, toast } from "react-toastify";
 
 const navigation = [
   { name: "Dashboard", href: "/" },
@@ -16,12 +16,27 @@ function classNames(...classes) {
 }
 
 export default function NabBar() {
+  //Web 3 Init and info
   const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
-  const { lib: web3, networkId, accounts, providerName } = web3Context;
+  const { networkId, accounts, providerName } = web3Context;
 
-  const requestAuth = (web3Context) => web3Context.requestAuth();
-  const requestAccess = useCallback(() => requestAuth(web3Context), []);
+  const requestAccess = useCallback(
+    () => web3Context.requestAuth(),
+    [web3Context]
+  );
   const location = useLocation();
+
+  //Toast info
+  const copyNotification = () =>
+    toast.info("Copied to clipboard", {
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+    });
 
   function getAccountHash() {
     if (accounts && accounts.length && networkId === 3) {
@@ -40,18 +55,34 @@ export default function NabBar() {
         accountHash.slice(-4, accountHash.length)
       );
     } else {
-      return "Invalid Hash";
+      return "Login";
     }
   }
 
   function checkAccount() {
     if (accounts && accounts.length) {
+      const accountHash = getShortAccountHash();
       return (
-        <div className="block px-4 py-2 w-full text-left cursor-pointer">
+        <div
+          className="block px-4 py-2 w-full text-left cursor-pointer"
+          onClick={() => {
+            copyNotification();
+            navigator.clipboard.writeText(getAccountHash());
+          }}
+        >
           <span> Logged in as </span>
-          <span className="font-semibold text-gray-500">
-            {getShortAccountHash()}
-          </span>
+          <span className="font-semibold text-gray-500">{accountHash}</span>
+          <ToastContainer
+            position="bottom-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+          />
         </div>
       );
     }
@@ -112,8 +143,8 @@ export default function NabBar() {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Account Hash */}
-                <div className="mr-3 text-gray-400 font-semibold text-sm">
-                  {checkAccount() ? getShortAccountHash() : null}
+                <div className="text-gray-400 font-semibold text-sm">
+                  {checkAccount() ? checkAccount() : null}
                 </div>
 
                 {/* Bell notifications */}

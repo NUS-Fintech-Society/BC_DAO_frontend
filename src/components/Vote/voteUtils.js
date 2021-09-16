@@ -14,13 +14,12 @@ export const showCurrentDate = (date) => {
   return new Date(date).toLocaleString("en-US", { dateStyle: "short" });
 };
 
-export const getReadableDate = () => {
-  const date = new Date().toLocaleString("en-US", {
+export const getReadableDate = (date) => {
+  return new Date(date).toLocaleString("en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
-  return date;
 };
 
 export const timeSince = (date) => {

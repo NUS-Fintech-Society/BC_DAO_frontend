@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, Fragment } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
+import { Dialog, Transition } from "@headlessui/react";
+import { getReadableDate } from "./voteUtils";
 
 const sample_content = {
   id: 1,
@@ -7,9 +9,10 @@ const sample_content = {
   description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
   userId: 2,
-  date: 1629138256120,
+  startDate: 1629138256120,
+  endDate: 1631172040787,
   isActive: true,
-  type: "single",
+  type: "loss",
   options: [
     { id: "1", label: "Disagree" },
     { id: "2", label: "10% per transaction" },
@@ -40,8 +43,18 @@ export default function VoteDetail() {
   const voteId = params.id;
   const content = sample_content;
 
+  let [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
   return (
-    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6">
+    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6 mb-10 cursor-default">
       <div className="flex flex-col space-y-8 w-full">
         <div className="space-y-4">
           <Link
@@ -96,9 +109,68 @@ export default function VoteDetail() {
             <button
               type="submit"
               className="w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 focus:outline-none m-1 hover:m-0 focus:m-0 border border-red-600 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-200 focus:border-purple-200 transition-all"
+              onClick={openModal}
             >
               Vote
             </button>
+            <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+              <Dialog
+                as="div"
+                className="fixed inset-0 z-10 overflow-y-auto"
+                onClose={closeModal}
+              >
+                <div className="min-h-screen px-4 text-center">
+                  {/* Allow for clicking outside to close modal*/}
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Dialog.Overlay className="fixed inset-0" />
+                  </Transition.Child>
+
+                  {/* This element is to trick the browser into centering the modal contents. */}
+                  <span
+                    className="inline-block h-screen align-middle"
+                    aria-hidden="true"
+                  >
+                    &#8203;
+                  </span>
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900 cursor-default"
+                      >
+                        Enter Vote Amount
+                      </Dialog.Title>
+                      <div className="flex flex-row py-2 items-center space-x-2 ">
+                        <input
+                          type="text"
+                          className="border border-gray-200 rounded-lg p-2 h-10 w-full shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
+                          placeholder="amount"
+                        />
+                        <button className="rounded-lg items-center h-10 px-3 py-2 text-sm font-bold text-red-600 bg-white border border-red-600 hover:border-red-800 hover:text-red-800 hover:bg-red-100 focus:border-red-200 focus:ring-2 focus:border-transparent transition-all">
+                          Vote
+                        </button>
+                      </div>
+                    </div>
+                  </Transition.Child>
+                </div>
+              </Dialog>
+            </Transition>
           </div>
         </div>
         <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
@@ -126,11 +198,17 @@ export default function VoteDetail() {
             Information
           </div>
           <div className="p-4 flex flex-col space-y-2">
-            <InformationItem title="Author" value="Johnny" />
+            <InformationItem title="Author" value={content.userId} />
             <InformationItem title="IPFS" value="#QmcJiUj" />
-            <InformationItem title="Voting system" value="Single Choice" />
-            <InformationItem title="Start date" value="test" />
-            <InformationItem title="End date" value="test" />
+            <InformationItem title="Voting system" value={content.type} />
+            <InformationItem
+              title="Start date"
+              value={getReadableDate(content.startDate)}
+            />
+            <InformationItem
+              title="End date"
+              value={getReadableDate(content.endDate)}
+            />
           </div>
         </div>
         <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
