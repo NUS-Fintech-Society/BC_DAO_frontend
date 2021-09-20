@@ -60,18 +60,19 @@ export async function initialiseUser(contract, account, userAccount) {
 
 //can change anything except .create proposal
 export async function createProposal(contract, account, values) {
-  const ipfsHash = uploadProposal(values);
+  const ipfsHash = uploadProposal(JSON.stringify(values));
   try {
     return await contract.methods
       .createProposal(
         ipfsHash,
-        values.numOfOptions,
-        values.minStakeValue,
-        values.isLossVoting,
-        values.isAllocationProposal
+        values["numOfOptions"],
+        values["min_stake"],
+        values["isLossVoting"],
+        values["isAllocationProposal"]
       )
       .send({ from: account });
   } catch (err) {
+    console.log(err);
     console.log("Unsuccessful setting of Proposal Status");
   }
 }

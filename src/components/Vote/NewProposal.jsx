@@ -13,7 +13,15 @@ const formTypes = [
   { label: "Allocation Proposal", value: "allocation" },
 ];
 
+const minStakeValues = [
+  { label: "No Minimum", value: 0 },
+  { label: "1 coin", value: 1 },
+  { label: "5 coins", value: 5 },
+  { label: "10 coins", value: 10 },
+];
+
 let initialType = "loss";
+let initialMinStakeVal = 0;
 
 // add number to options
 const initialValues = {
@@ -21,10 +29,10 @@ const initialValues = {
   content: "",
   type: initialType,
   options: [{ id: 1, label: "" }],
-  minStakeValue: 0,
+  min_stake: initialMinStakeVal,
 };
 
-async function submitProposal(contract, accounts, values) {
+async function submitProposal(contract, account, values) {
   const finalValues = {
     ...values,
     numOfOptions: values.options.length,
@@ -32,7 +40,11 @@ async function submitProposal(contract, accounts, values) {
     isAllocationProposal: values.type === "allocation",
   };
 
-  const create = await createProposal(contract, accounts, finalValues);
+  console.log(finalValues);
+
+  const create = await createProposal(contract, account, finalValues);
+  console.log(create);
+  return create;
 }
 
 const proposalSchema = Yup.object().shape({
@@ -69,16 +81,6 @@ export default function NewProposal() {
           </Link>
         </div>
       </div>
-      {/* <button
-        onClick={async () => {
-          const proposalContract = await getContract(web3);
-          submitProposal(temp, proposalContract);
-          const temp = await getProposalHashes(proposalContract);
-          console.log(JSON.stringify(temp));
-        }}
-      >
-        TestButton2
-      </button> */}
       <div className="max-w-7xl x-auto px-8 py-2">
         <Formik
           initialValues={initialValues}
@@ -87,12 +89,17 @@ export default function NewProposal() {
             console.log(JSON.stringify(values));
 
             const contract = await getContract(web3);
-            submitProposal(contract, accounts, values);
+            submitProposal(contract, accounts[0], values);
             actions.setSubmitting(false);
           }}
         >
           {({ values, errors, touched }) => (
             <Form>
+              <div className="hidden">
+                {(values.min_stake = initialMinStakeVal)}
+                {(values.type = initialType)}
+              </div>
+
               <div className="flex flex-col text-gray-600 lg:flex-row lg:space-x-4">
                 <div className="flex-col w-full">
                   <Field
@@ -173,6 +180,11 @@ export default function NewProposal() {
                       name="type"
                       component={CustomVoteInput}
                     />
+                    <Field
+                      as="select"
+                      name="min_stake"
+                      component={CustomStakeInput}
+                    />
                     <button
                       type="submit"
                       className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all"
@@ -250,6 +262,118 @@ const CustomOptionInput = ({ field, ...props }) => (
     />
   </div>
 );
+
+function CustomStakeInput({ field, ...props }) {
+  let [isOpen, setIsOpen] = useState(false);
+  let [stakeLabel, setStakeLabel] = useState(getLabel());
+  let buttonRef = useRef(minStakeValues.map(() => React.createRef()));
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function setStake(stake) {
+    initialMinStakeVal = stake.value;
+    field.min_stake = stake.value;
+    setStakeLabel(stake.label);
+    closeModal();
+  }
+
+  // Get the label corresponding to the value in minStakeValues
+  function getLabel() {
+    try {
+      return minStakeValues.find((stake) => stake.value === field.value).label;
+    } catch (error) {
+      return "Select Minimum Stake";
+    }
+  }
+
+  // Get the position of the label in minStakeValues using value
+  function getPosition() {
+    return minStakeValues.findIndex((stake) => stake.value === field.value);
+  }
+
+  return (
+    <>
+      <div className="flex flex-col w-full">
+        <button
+          className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all"
+          onClick={openModal}
+        >
+          {stakeLabel}
+        </button>
+      </div>
+      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={closeModal}
+          initialFocus={buttonRef.current[getPosition()]}
+        >
+          <div className="min-h-screen px-4 text-center">
+            {/* Allow for clicking outside to close modal*/}
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900 cursor-default"
+                >
+                  Select Minimum Stake
+                </Dialog.Title>
+                <div className="mt-2">
+                  {minStakeValues.map((stake, index) => (
+                    <button
+                      key={stake.value}
+                      value={stake.value}
+                      {...field}
+                      {...props}
+                      ref={buttonRef.current[index]}
+                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
+                      onClick={() => setStake(stake)}
+                    >
+                      {stake.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
 
 function CustomVoteInput({ field, ...props }) {
   let [isOpen, setIsOpen] = useState(false);
@@ -340,7 +464,7 @@ function CustomVoteInput({ field, ...props }) {
                 <div className="mt-2">
                   {formTypes.map((type, index) => (
                     <button
-                      key={index}
+                      key={type.value}
                       value={type.value}
                       {...field}
                       {...props}
