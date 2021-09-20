@@ -32,19 +32,7 @@ async function submitProposal(contract, accounts, values) {
     isAllocationProposal: values.type === "allocation",
   };
 
-  const create = await createProposal(
-    contract,
-    accounts,
-    finalValues.title,
-    finalValues.content,
-    finalValues.type,
-    finalValues.options,
-    finalValues.numOfOptions,
-    finalValues.minStakeValue,
-    finalValues.isLossVoting,
-    finalValues.isAllocationProposal
-  );
-  return;
+  const create = await createProposal(contract, accounts, finalValues);
 }
 
 const proposalSchema = Yup.object().shape({
@@ -183,7 +171,7 @@ export default function NewProposal() {
                     <Field
                       as="select"
                       name="type"
-                      component={CustomButtonInput}
+                      component={CustomVoteInput}
                     />
                     <button
                       type="submit"
@@ -263,7 +251,7 @@ const CustomOptionInput = ({ field, ...props }) => (
   </div>
 );
 
-function CustomButtonInput({ field, ...props }) {
+function CustomVoteInput({ field, ...props }) {
   let [isOpen, setIsOpen] = useState(false);
   let buttonRef = useRef(formTypes.map(() => React.createRef()));
 
