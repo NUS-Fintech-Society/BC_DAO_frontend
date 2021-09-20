@@ -58,30 +58,17 @@ export async function initialiseUser(contract, account, userAccount) {
   }
 }
 
-export async function createProposal(
-  contract,
-  account,
-  numOfOptions,
-  minStakeValue,
-  isLossVoting,
-  isAllocationProposal
-) {
-  const ipfsHash = await uploadProposal(
-    JSON.stringify({
-      numOfOptions,
-      minStakeValue,
-      isLossVoting,
-      isAllocationProposal,
-    })
-  );
+//can change anything except .create proposal
+export async function createProposal(contract, account, values) {
+  const ipfsHash = uploadProposal(values);
   try {
     return await contract.methods
       .createProposal(
         ipfsHash,
-        numOfOptions,
-        minStakeValue,
-        isLossVoting,
-        isAllocationProposal
+        values.numOfOptions,
+        values.minStakeValue,
+        values.isLossVoting,
+        values.isAllocationProposal
       )
       .send({ from: account });
   } catch (err) {

@@ -5,8 +5,7 @@ import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { retrieveProposal } from "../api/Api";
-import { getAllProposals, getContract } from "../api/Api";
+import { getContract, createProposal } from "../api/Api";
 import projectId from "../../secrets.json";
 
 const formTypes = [
@@ -22,11 +21,31 @@ const initialValues = {
   content: "",
   type: initialType,
   options: [{ id: 1, label: "" }],
+  minStakeValue: 0,
 };
 
-const finalValues = {
-  //need number of options that can be passed
-};
+async function submitProposal(contract, accounts, values) {
+  const finalValues = {
+    ...values,
+    numOfOptions: values.options.length,
+    isLossVoting: values.type === "loss",
+    isAllocationProposal: values.type === "allocation",
+  };
+
+  const create = await createProposal(
+    contract,
+    accounts,
+    finalValues.title,
+    finalValues.content,
+    finalValues.type,
+    finalValues.options,
+    finalValues.numOfOptions,
+    finalValues.minStakeValue,
+    finalValues.isLossVoting,
+    finalValues.isAllocationProposal
+  );
+  return;
+}
 
 const proposalSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -36,7 +55,7 @@ const proposalSchema = Yup.object().shape({
 
 export default function NewProposal() {
   const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
-  const { lib: web3, networkId, accounts, providerName } = web3Context;
+  const { lib: web3, accounts } = web3Context;
 
   //Toast for error messages
   const errorNotification = (error) =>
@@ -62,22 +81,26 @@ export default function NewProposal() {
           </Link>
         </div>
       </div>
-      <button
+      {/* <button
         onClick={async () => {
-          const temp = await getAllProposals(getContract(web3));
+          const proposalContract = await getContract(web3);
+          submitProposal(temp, proposalContract);
+          const temp = await getProposalHashes(proposalContract);
           console.log(JSON.stringify(temp));
         }}
       >
         TestButton2
-      </button>
+      </button> */}
       <div className="max-w-7xl x-auto px-8 py-2">
         <Formik
           initialValues={initialValues}
           validationSchema={proposalSchema}
-          onSubmit={(values, actions) => {
+          onSubmit={async (values, actions) => {
             console.log(JSON.stringify(values));
+
+            const contract = await getContract(web3);
+            submitProposal(contract, accounts, values);
             actions.setSubmitting(false);
-            // getProposal(web3);
           }}
         >
           {({ values, errors, touched }) => (
