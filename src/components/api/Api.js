@@ -22,7 +22,7 @@ export async function uploadProposal(text) {
 }
 
 export async function retrieveProposal(proposalHash) {
-  return await fetch("http://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
+  return fetch("http://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
     x.json()
   );
 }
@@ -33,21 +33,21 @@ export function getContract(web3) {
 
 export async function getProposalHashes(web3) {
   const contract = await getContract(web3);
-  return await contract.methods.getProposalHashes().call();
+  return contract.methods.getProposalHashes().call();
 }
 
 export async function getProposalInfo(web3, ipfsHash) {
   const contract = await getContract(web3);
-  return await contract.methods.getProposalInfo(ipfsHash).call();
+  return contract.methods.getProposalInfo(ipfsHash).call();
 }
 export async function getAllProposals(web3) {
   const contract = await getContract(web3);
-  return await contract.methods.getAllProposals().call();
+  return contract.methods.getAllProposals().call();
 }
 
 export async function getVotesForOption(web3, ipfsHash, optionIndex) {
   const contract = await getContract(web3);
-  return await contract.methods.getVotesForOption(ipfsHash, optionIndex).call();
+  return contract.methods.getVotesForOption(ipfsHash, optionIndex).call();
 }
 
 export async function initialiseUser(web3, account, userAccount) {
@@ -63,8 +63,8 @@ export async function initialiseUser(web3, account, userAccount) {
 
 //can change anything except .create proposal
 export async function createProposal(web3, account, values) {
-  const ipfsHash = uploadProposal(JSON.stringify(values));
   const contract = await getContract(web3);
+  const ipfsHash = await uploadProposal(JSON.stringify(values));
   try {
     return await contract.methods
       .createProposal(
@@ -78,6 +78,7 @@ export async function createProposal(web3, account, values) {
   } catch (err) {
     console.log(err);
     console.log("Unsuccessful setting of Proposal Status");
+    return false;
   }
 }
 
