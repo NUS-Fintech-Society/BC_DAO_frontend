@@ -31,24 +31,27 @@ export function getContract(web3) {
   return new web3.eth.Contract(abi, address);
 }
 
-export async function getProposalHashes(contract) {
-  console.log(contract);
+export async function getProposalHashes(web3) {
+  const contract = await getContract(web3);
   return await contract.methods.getProposalHashes().call();
 }
 
-export async function getProposalInfo(contract, ipfsHash) {
+export async function getProposalInfo(web3, ipfsHash) {
+  const contract = await getContract(web3);
   return await contract.methods.getProposalInfo(ipfsHash).call();
 }
-
-export async function getAllProposals(contract) {
+export async function getAllProposals(web3) {
+  const contract = await getContract(web3);
   return await contract.methods.getAllProposals().call();
 }
 
-export async function getVotesForOption(contract, ipfsHash, optionIndex) {
+export async function getVotesForOption(web3, ipfsHash, optionIndex) {
+  const contract = await getContract(web3);
   return await contract.methods.getVotesForOption(ipfsHash, optionIndex).call();
 }
 
-export async function initialiseUser(contract, account, userAccount) {
+export async function initialiseUser(web3, account, userAccount) {
+  const contract = await getContract(web3);
   try {
     return await contract.methods
       .initialiseUser(userAccount)
@@ -59,8 +62,9 @@ export async function initialiseUser(contract, account, userAccount) {
 }
 
 //can change anything except .create proposal
-export async function createProposal(contract, account, values) {
+export async function createProposal(web3, account, values) {
   const ipfsHash = uploadProposal(JSON.stringify(values));
+  const contract = await getContract(web3);
   try {
     return await contract.methods
       .createProposal(
@@ -77,7 +81,8 @@ export async function createProposal(contract, account, values) {
   }
 }
 
-export async function setProposalStatus(contract, account, ipfsHash, isActive) {
+export async function setProposalStatus(web3, account, ipfsHash, isActive) {
+  const contract = await getContract(web3);
   try {
     return await contract.methods
       .setProposalStatus(ipfsHash, isActive)
@@ -87,13 +92,8 @@ export async function setProposalStatus(contract, account, ipfsHash, isActive) {
   }
 }
 
-export async function vote(
-  contract,
-  account,
-  ipfsHash,
-  optionIndex,
-  stakeValue
-) {
+export async function vote(web3, account, ipfsHash, optionIndex, stakeValue) {
+  const contract = await getContract(web3);
   try {
     return await contract.methods
       .vote(ipfsHash, optionIndex, stakeValue)
