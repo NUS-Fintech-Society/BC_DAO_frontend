@@ -40,12 +40,10 @@ async function submitProposal(web3, account, values) {
     numOfOptions: values.options.length,
     isLossVoting: values.type === "loss",
     isAllocationProposal: values.type === "allocation",
+    userId: account,
   };
 
-  console.log(finalValues);
-
   const create = await createProposal(web3, account, finalValues);
-  console.log(create);
   return create;
 }
 
@@ -188,7 +186,6 @@ export default function NewProposal() {
                           : `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all`
                       }
                       onClick={() => {
-                        console.log(values);
                         submitProposal(web3, accounts[0], values);
                         setSubmitting(false);
                       }}

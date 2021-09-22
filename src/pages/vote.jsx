@@ -4,6 +4,7 @@ import NavBar from "../components/Layout/NavBar";
 import VoteList from "../components/Vote/VoteList";
 import VoteDetail from "../components/Vote/VoteDetail";
 import NewProposal from "../components/Vote/NewProposal";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Vote() {
   let { path, url } = useRouteMatch();

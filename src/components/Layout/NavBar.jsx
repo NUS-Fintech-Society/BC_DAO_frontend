@@ -5,6 +5,7 @@ import { useLocation } from "react-router";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import { projectId } from "../../secrets.json";
 import { ToastContainer, toast } from "react-toastify";
+import { getShortAccountHash } from "../api/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/" },
@@ -46,22 +47,9 @@ export default function NabBar() {
     }
   }
 
-  function getShortAccountHash() {
-    const accountHash = getAccountHash();
-    if (accountHash) {
-      return (
-        accountHash.slice(0, 6) +
-        "..." +
-        accountHash.slice(-4, accountHash.length)
-      );
-    } else {
-      return "Login";
-    }
-  }
-
   function checkAccount() {
     if (accounts && accounts.length) {
-      const accountHash = getShortAccountHash();
+      const accountHash = getShortAccountHash(getAccountHash());
       return (
         <div
           className="block px-4 py-2 w-full text-left cursor-pointer"

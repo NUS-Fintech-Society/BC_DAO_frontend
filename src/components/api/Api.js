@@ -93,11 +93,18 @@ export async function setProposalStatus(web3, account, ipfsHash, isActive) {
   }
 }
 
-export async function vote(web3, account, ipfsHash, optionIndex, stakeValue) {
+export async function sendVote(
+  web3,
+  account,
+  ipfsHash,
+  optionIndex,
+  stakeValue
+) {
   const contract = await getContract(web3);
+  const amt = stakeValue * 1000000000000000000;
   try {
     return await contract.methods
-      .vote(ipfsHash, optionIndex, stakeValue)
+      .vote(ipfsHash, optionIndex, String(amt))
       .send({ from: account });
   } catch (err) {
     console.log("Unsuccessful voting on proposal");

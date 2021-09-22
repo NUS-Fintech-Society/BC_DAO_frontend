@@ -1,16 +1,28 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { getReadableDate } from "./voteUtils";
+import projectId from "../../secrets.json";
+import {
+  getProposalHashes,
+  getAllProposals,
+  getProposalInfo,
+  retrieveProposal,
+  sendVote,
+} from "../api/Api";
+import { useWeb3 } from "@openzeppelin/network/lib/react";
+import { getShortAccountHash } from "../api/utils";
+
+import { toast } from "react-toastify";
 
 const sample_content = {
   id: 1,
   title: "Content header",
-  description:
+  content:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
   userId: 2,
-  startDate: 1629138256120,
-  endDate: 1631172040787,
+  created_date: 1629138256120,
+  end_date: 1631172040787,
   isActive: true,
   type: "loss",
   options: [
@@ -31,7 +43,7 @@ const collected_votes = [
 ];
 
 const current_results = [
-  { choice: "Author", percentage: "50.90" },
+  { choice: "Author", percentage: "22" },
   { choice: "IPFS", percentage: "20" },
   { choice: "Voting system", percentage: "10" },
   { choice: "Start date", percentage: "5" },
@@ -39,10 +51,31 @@ const current_results = [
 ];
 
 export default function VoteDetail() {
+  //Address routing
   let { params } = useRouteMatch();
-  const voteId = params.id;
-  const content = sample_content;
+  const ipfsHash = params.id;
 
+  //Web3 API Itialization
+  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const { lib: web3, accounts } = web3Context;
+
+  //Getting proposal content
+  const [proposalContent, setProposalContent] = useState(null);
+  const [proposalInfo, setProposalInfo] = useState(null);
+
+  useEffect(() => {
+    async function getProposal() {
+      await retrieveProposal(ipfsHash).then((proposal) => {
+        setProposalContent(proposal);
+      });
+      await getProposalInfo(web3, ipfsHash).then((info) => {
+        setProposalInfo(info);
+      });
+    }
+    getProposal();
+  }, [ipfsHash]);
+
+  //Model Handling
   let [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -53,182 +86,282 @@ export default function VoteDetail() {
     setIsOpen(true);
   }
 
-  return (
-    <div className="flex flex-col space-y-6 max-w-7xl mx-auto p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6 mb-10 cursor-default">
-      <div className="flex flex-col space-y-8 w-full">
-        <div className="space-y-4">
-          <Link
-            to="/vote"
-            className="flex flex-row text-gray-400 items-center content-center cursor-pointer w-min"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16l-4-4m0 0l4-4m-4 4h18"
-              />
-            </svg>
-            <div className="">back</div>
-          </Link>
-          <div className="text-gray-700 font-bold text-3xl">
-            {content.title}
-          </div>
-          {content.isActive ? (
-            <div className="flex bg-green-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
-              Active
-            </div>
-          ) : (
-            <div className="flex bg-purple-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
-              Closed
-            </div>
-          )}
-          <div className="text-gray-600 font-medium text-xl">
-            {content.description}
-          </div>
-        </div>
-        <div className="flex-col bg-white rounded-xl border border-gray-200">
-          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
-            Cast your vote
-          </div>
-          <div className="p-4">
-            {content.options.map((option, index) => (
-              <button
-                type="submit"
-                className="w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-500"
-              >
-                {option.label}
-              </button>
-            ))}
-            <button
-              type="submit"
-              className="w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 focus:outline-none m-1 hover:m-0 focus:m-0 border border-red-600 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-200 focus:border-purple-200 transition-all"
-              onClick={openModal}
-            >
-              Vote
-            </button>
-            <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
-              <Dialog
-                as="div"
-                className="fixed inset-0 z-10 overflow-y-auto"
-                onClose={closeModal}
-              >
-                <div className="min-h-screen px-4 text-center">
-                  {/* Allow for clicking outside to close modal*/}
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Dialog.Overlay className="fixed inset-0" />
-                  </Transition.Child>
+  console.log(proposalInfo);
 
-                  {/* This element is to trick the browser into centering the modal contents. */}
-                  <span
-                    className="inline-block h-screen align-middle"
-                    aria-hidden="true"
+  //Vote submission
+  const [amount, setAmount] = useState(0);
+
+  const amountError = () =>
+    toast.warn("Please fill in an amount", {
+      position: "bottom-center",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
+  const [selected, setSelected] = useState(null);
+
+  async function submitVote() {
+    const vote = await sendVote(
+      web3,
+      accounts[0],
+      ipfsHash,
+      selected,
+      Number(amount)
+    );
+    return vote;
+  }
+
+  function isSelected() {
+    if (selected !== undefined && selected !== null) {
+      return true;
+    }
+    return false;
+  }
+
+  function getType() {
+    if (proposalContent.type === "loss") {
+      return "Loss Voting";
+    }
+    if (proposalContent.type === "allocation") {
+      return "Allocation Proposal";
+    }
+    return "unknown";
+  }
+
+  return (
+    <>
+      {proposalContent ? (
+        <div className="flex flex-col space-y-6 max-w-7xl p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6 mb-10 cursor-default">
+          <div className="flex flex-col space-y-8 w-full">
+            <div className="space-y-4">
+              <Link
+                to="/vote"
+                className="flex flex-row text-gray-400 items-center content-center cursor-pointer w-min"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                  />
+                </svg>
+                <div className="">back</div>
+              </Link>
+              <div className="text-gray-700 font-bold text-3xl">
+                {proposalContent.title}
+              </div>
+              <div className="div">
+                <IsActiveTag content={proposalContent} />
+              </div>
+              <div className="text-gray-600 font-medium text-xl">
+                {proposalContent.content}
+              </div>
+            </div>
+            <div className="flex-col bg-white rounded-xl border border-gray-200">
+              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+                Cast your vote
+              </div>
+              <div className="p-4">
+                {proposalContent.options.map((option, index) => (
+                  <button
+                    key={option.id}
+                    type="submit"
+                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all 
+                    ${
+                      index === selected
+                        ? "ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50"
+                        : null
+                    }`}
+                    onClick={() => setSelected(index)}
                   >
-                    &#8203;
-                  </span>
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
+                    {option.label}
+                  </button>
+                ))}
+                <button
+                  type="submit"
+                  className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
+                    isSelected()
+                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-200 focus:border-purple-200  cursor-pointer"
+                      : "cursor-not-allowed"
+                  }`}
+                  onClick={isSelected() ? openModal : null}
+                >
+                  Vote
+                </button>
+                <Transition
+                  appear
+                  show={isOpen}
+                  as={Fragment}
+                  autoFocus={isOpen}
+                >
+                  <Dialog
+                    as="div"
+                    className="fixed inset-0 z-10 overflow-y-auto"
+                    onClose={closeModal}
                   >
-                    <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900 cursor-default"
+                    <div className="min-h-screen px-4 text-center">
+                      {/* Allow for clicking outside to close modal*/}
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
                       >
-                        Enter Vote Amount
-                      </Dialog.Title>
-                      <div className="flex flex-row py-2 items-center space-x-2 ">
-                        <input
-                          type="text"
-                          className="border border-gray-200 rounded-lg p-2 h-10 w-full shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
-                          placeholder="amount"
-                        />
-                        <button className="rounded-lg items-center h-10 px-3 py-2 text-sm font-bold text-red-600 bg-white border border-red-600 hover:border-red-800 hover:text-red-800 hover:bg-red-100 focus:border-red-200 focus:ring-2 focus:border-transparent transition-all">
-                          Vote
-                        </button>
-                      </div>
+                        <Dialog.Overlay className="fixed inset-0" />
+                      </Transition.Child>
+
+                      {/* This element is to trick the browser into centering the modal contents. */}
+                      <span
+                        className="inline-block h-screen align-middle"
+                        aria-hidden="true"
+                      >
+                        &#8203;
+                      </span>
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                          <Dialog.Title
+                            as="h3"
+                            className="text-lg font-medium leading-6 text-gray-900 cursor-default"
+                          >
+                            Enter Stake Amount
+                          </Dialog.Title>
+                          <div className="py-1 font-thin text-sm">
+                            {isSelected()
+                              ? `You are voting for: ${proposalContent.options[selected].label}`
+                              : "Please choose an option!"}
+                          </div>
+                          <div className="flex flex-row py-2 items-center space-x-2 ">
+                            <input
+                              type="number"
+                              className="border border-gray-200 rounded-lg p-2 h-10 w-full shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
+                              placeholder="amount"
+                              onChange={(e) => setAmount(e.target.value)}
+                            />
+                            <button
+                              onClick={() => {
+                                if (amount) {
+                                  submitVote();
+                                  setTimeout(() => {
+                                    closeModal();
+                                  }, 5000);
+                                } else {
+                                  amountError();
+                                }
+                              }}
+                              className="rounded-lg items-center h-10 px-3 py-2 text-sm font-bold text-red-600 bg-white border border-red-600 hover:border-red-800 hover:text-red-800 hover:bg-red-100 focus:border-red-200 focus:ring-2 focus:border-transparent transition-all"
+                            >
+                              Vote!
+                            </button>
+                          </div>
+                        </div>
+                      </Transition.Child>
                     </div>
-                  </Transition.Child>
-                </div>
-              </Dialog>
-            </Transition>
+                  </Dialog>
+                </Transition>
+              </div>
+            </div>
+            <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+                Votes
+              </div>
+              <div className="flex flex-col">
+                {collected_votes.map((vote, index) => (
+                  <VoteItem
+                    key={index}
+                    address={vote.address}
+                    choice={vote.choice}
+                    amount={vote.amount}
+                  />
+                ))}
+              </div>
+              <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
+                See More
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col xl:w-96 space-y-6">
+            <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+                Information
+              </div>
+              <div className="p-4 flex flex-col space-y-2">
+                <InformationItem
+                  title="Author"
+                  value={getShortAccountHash(proposalContent.userId)}
+                />
+                <InformationItem
+                  title="IPFS"
+                  value={getShortAccountHash(ipfsHash)}
+                />
+                <InformationItem
+                  title="Min Stake Value"
+                  value={proposalContent.min_stake}
+                />
+                <InformationItem title="Voting system" value={getType()} />
+                <InformationItem
+                  title="Created date"
+                  value={getReadableDate(proposalContent.create_date)}
+                />
+                <InformationItem
+                  title="Closing date"
+                  value={getReadableDate(proposalContent.end_date)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+                Current Results
+              </div>
+              <div className="p-4 flex flex-col space-y-2">
+                {current_results.map((result, index) => (
+                  <ResultItem
+                    key={index}
+                    choice={result.choice}
+                    percentage={result.percentage}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
-            Votes
-          </div>
-          <div className="flex flex-col">
-            {collected_votes.map((vote, index) => (
-              <VoteItem
-                key={index}
-                address={vote.address}
-                choice={vote.choice}
-                amount={vote.amount}
-              />
-            ))}
-          </div>
-          <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
-            See More
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col xl:w-96 space-y-6">
-        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
-            Information
-          </div>
-          <div className="p-4 flex flex-col space-y-2">
-            <InformationItem title="Author" value={content.userId} />
-            <InformationItem title="IPFS" value="#QmcJiUj" />
-            <InformationItem title="Voting system" value={content.type} />
-            <InformationItem
-              title="Start date"
-              value={getReadableDate(content.startDate)}
-            />
-            <InformationItem
-              title="End date"
-              value={getReadableDate(content.endDate)}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-          <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
-            Current Results
-          </div>
-          <div className="p-4 flex flex-col space-y-2">
-            {current_results.map((result, index) => (
-              <ResultItem
-                key={index}
-                choice={result.choice}
-                percentage={result.percentage}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+      ) : null}
+    </>
   );
 }
+
+const IsActiveTag = ({ content }) => {
+  return content.isActive ? (
+    <div className="flex bg-green-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
+      Active
+    </div>
+  ) : (
+    <div className="flex bg-purple-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
+      Closed
+    </div>
+  );
+};
 
 const VoteItem = ({ address, choice, amount }) => {
   return (
