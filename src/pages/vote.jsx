@@ -11,7 +11,7 @@ export default function Vote() {
   return (
     <div className="w-full h-full">
       <NavBar />
-      <div className="flex flex-col max-w-7xl mx-auto p-2">
+      <div className="flex flex-col max-w-7xl mx-auto p-2 mb-10">
         <Switch>
           <Route exact path={path}>
             <div className="flex flex-row items-center justify-between px-4 ">

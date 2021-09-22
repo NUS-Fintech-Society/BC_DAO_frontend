@@ -75,6 +75,9 @@ export default function VoteDetail() {
     getProposal();
   }, [ipfsHash]);
 
+  console.log(proposalInfo);
+  console.log(proposalContent);
+
   //Model Handling
   let [isOpen, setIsOpen] = useState(false);
 
@@ -86,13 +89,22 @@ export default function VoteDetail() {
     setIsOpen(true);
   }
 
-  console.log(proposalInfo);
-
   //Vote submission
   const [amount, setAmount] = useState(0);
 
   const amountError = () =>
     toast.warn("Please fill in an amount", {
+      position: "bottom-center",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
+  const confirmationMessage = () =>
+    toast.success("🦊 Confirm on MetaMask!", {
       position: "bottom-center",
       autoClose: 4000,
       hideProgressBar: false,
@@ -263,9 +275,10 @@ export default function VoteDetail() {
                               onClick={() => {
                                 if (amount) {
                                   submitVote();
+                                  confirmationMessage();
                                   setTimeout(() => {
                                     closeModal();
-                                  }, 5000);
+                                  }, 3000);
                                 } else {
                                   amountError();
                                 }
@@ -282,24 +295,10 @@ export default function VoteDetail() {
                 </Transition>
               </div>
             </div>
-            <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
-                Votes
-              </div>
-              <div className="flex flex-col">
-                {collected_votes.map((vote, index) => (
-                  <VoteItem
-                    key={index}
-                    address={vote.address}
-                    choice={vote.choice}
-                    amount={vote.amount}
-                  />
-                ))}
-              </div>
-              <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
-                See More
-              </div>
-            </div>
+            <PreviousVotesList
+              proposalContent={proposalContent}
+              proposalInfo={proposalInfo}
+            />
           </div>
           <div className="flex flex-col xl:w-96 space-y-6">
             <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
@@ -334,15 +333,17 @@ export default function VoteDetail() {
               <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                 Current Results
               </div>
-              <div className="p-4 flex flex-col space-y-2">
-                {current_results.map((result, index) => (
-                  <ResultItem
-                    key={index}
-                    choice={result.choice}
-                    percentage={result.percentage}
-                  />
-                ))}
-              </div>
+              {proposalContent.type === "loss" ? (
+                <CurrentResultsLoss
+                  proposalContent={proposalContent}
+                  proposalInfo={proposalInfo}
+                />
+              ) : (
+                <CurrentResultsAllocation
+                  proposalContent={proposalContent}
+                  proposalInfo={proposalInfo}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -382,12 +383,12 @@ const InformationItem = ({ title, value }) => {
   );
 };
 
-const ResultItem = ({ choice, percentage }) => {
+const ResultItem = ({ choice, percentage, label }) => {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
         <div className="class">{choice}</div>
-        <div className="text-gray-700">{percentage}%</div>
+        <div className="text-gray-700">{label} NUSC</div>
       </div>
       <div className="shadow-lg">
         <div className="w-full h-1 rounded-full bg-gray-200"></div>
@@ -399,3 +400,144 @@ const ResultItem = ({ choice, percentage }) => {
     </div>
   );
 };
+
+function PreviousVotesList({ proposalContent, proposalInfo }) {
+  const [currentResults, setCurrentResults] = useState([]);
+
+  useEffect(() => {
+    function getCurrentResults() {
+      const temp = [];
+      proposalInfo.votes.forEach((vote) => {
+        temp.push({
+          address: getShortAccountHash(vote.voter),
+          choice: proposalContent.options[vote.option].label,
+          amount: vote.amount / 10 ** 18,
+        });
+      });
+      return temp;
+    }
+    if (proposalInfo !== null && proposalContent !== null) {
+      setCurrentResults(getCurrentResults());
+    }
+  }, [proposalContent, proposalInfo]);
+
+  console.log(currentResults);
+
+  return (
+    <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
+      <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+        Vote History
+      </div>
+      <div className="flex flex-col">
+        {currentResults.length !== 0 ? (
+          currentResults.map((result, index) => (
+            <VoteItem
+              key={index}
+              choice={result.choice}
+              address={result.address}
+              amount={result.amount}
+            />
+          ))
+        ) : (
+          <div className="px-8 py-3 text-center font-semibold">
+            No history...
+          </div>
+        )}
+      </div>
+      <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
+        See More
+      </div>
+    </div>
+  );
+}
+
+function CurrentResultsLoss({ proposalContent, proposalInfo }) {
+  const [currentResults, setCurrentResults] = useState([]);
+
+  useEffect(() => {
+    function getCurrentResults() {
+      const temp = [];
+      const totalStaked = proposalInfo.stakedValuePerOption.reduce(
+        (a, b) => a + b / 10 ** 18,
+        0
+      );
+      proposalContent.options.forEach((option, index) => {
+        temp.push({
+          choice: option.label,
+          percentage:
+            Math.round(
+              proposalInfo.stakedValuePerOption[index] / 10 ** 14 / totalStaked
+            ) / 100,
+          label: proposalInfo.stakedValuePerOption[index] / 10 ** 18,
+        });
+      });
+      return temp;
+    }
+    if (proposalInfo !== null && proposalContent !== null) {
+      setCurrentResults(getCurrentResults());
+    }
+  }, [proposalContent, proposalInfo]);
+
+  return (
+    <div className="p-4 flex flex-col space-y-2">
+      {currentResults.length !== 0 ? (
+        currentResults.map((result, index) => (
+          <ResultItem
+            key={index}
+            choice={result.choice}
+            percentage={result.percentage}
+            label={result.label}
+          />
+        ))
+      ) : (
+        <div className="font-semibold px-4">Be the first to vote!</div>
+      )}
+    </div>
+  );
+}
+
+function CurrentResultsAllocation({ proposalContent, proposalInfo }) {
+  const [currentResults, setCurrentResults] = useState([]);
+
+  useEffect(() => {
+    function getCurrentResults() {
+      const temp = [];
+      const totalStaked = proposalInfo.stakedValuePerOption.reduce(
+        (a, b) => a + b / 10 ** 18,
+        0
+      );
+      const votes = [...proposalInfo.votes];
+      const sortedVotes = votes.sort((a, b) => {
+        return b.amount - a.amount;
+      });
+      sortedVotes.forEach((vote) => {
+        temp.push({
+          choice: proposalContent.options[vote.option].label,
+          percentage: Math.round(vote.amount / 10 ** 14 / totalStaked) / 100,
+          label: vote.amount / 10 ** 18,
+        });
+      });
+      return temp;
+    }
+    if (proposalInfo !== null && proposalContent !== null) {
+      setCurrentResults(getCurrentResults());
+    }
+  }, [proposalContent, proposalInfo]);
+
+  return (
+    <div className="p-4 flex flex-col space-y-2">
+      {currentResults.length !== 0 ? (
+        currentResults.map((result, index) => (
+          <ResultItem
+            key={index}
+            choice={result.choice}
+            percentage={result.percentage}
+            label={result.label}
+          />
+        ))
+      ) : (
+        <div className="font-semibold px-4">Be the first to vote!</div>
+      )}
+    </div>
+  );
+}
