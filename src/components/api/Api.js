@@ -1,12 +1,5 @@
-// const { ipfsProjectId } = require("../../../src/secrets.json");
-// const { ipfsProjectSecret } = require("../../../src/secrets.json");
-
 const { address, abi } = require("./contract.json");
 const ipfsClient = require("ipfs-http-client");
-
-// const auth =
-//   "Basic " +
-//   Buffer.from(ipfsProjectId + ":" + ipfsProjectSecret).toString("base64");
 
 const ipfs = ipfsClient.create({
   host: "ipfs.infura.io",
