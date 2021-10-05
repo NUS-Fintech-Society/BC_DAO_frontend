@@ -15,41 +15,6 @@ import { getShortAccountHash } from "../api/utils";
 
 import { toast } from "react-toastify";
 
-const sample_content = {
-  id: 1,
-  title: "Content header",
-  content:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci impedit quia nobis illum consequuntur excepturi, repellat atque, eveniet aliquid expedita, aut illo inventore ipsum? Incidunt omnis vitae pariatur facere facilis non ea, minima aperiam, amet nisi culpa sit distinctio? Facilis voluptas iusto sint sapiente deserunt sunt rem animi at id!",
-  userId: 2,
-  created_date: 1629138256120,
-  end_date: 1631172040787,
-  isActive: true,
-  type: "loss",
-  options: [
-    { id: "1", label: "Disagree" },
-    { id: "2", label: "10% per transaction" },
-    { id: "3", label: "20% per transaction" },
-    { id: "4", label: "30% per transaction" },
-    { id: "5", label: "50% per transaction" },
-  ],
-};
-
-const collected_votes = [
-  { address: "China.eth", choice: "30% per transaction", amount: "10" },
-  { address: "0x69AB...6e88", choice: "30% per transaction", amount: "10" },
-  { address: "0x42AB...2e81", choice: "Disagree", amount: "10" },
-  { address: "0x090C...6e99", choice: "Disagree", amount: "500" },
-  { address: "0x67FQ...5e78", choice: "50% per transaction", amount: "69" },
-];
-
-const current_results = [
-  { choice: "Author", percentage: "22" },
-  { choice: "IPFS", percentage: "20" },
-  { choice: "Voting system", percentage: "10" },
-  { choice: "Start date", percentage: "5" },
-  { choice: "End date", percentage: "5" },
-];
-
 export default function VoteDetail() {
   //Address routing
   let { params } = useRouteMatch();
@@ -90,10 +55,11 @@ export default function VoteDetail() {
   }
 
   //Vote submission
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(null);
 
+  //Amount Toasts
   const amountError = () =>
-    toast.warn("Please fill in an amount", {
+    toast.warn("Amount must be greater than min stake value", {
       position: "bottom-center",
       autoClose: 4000,
       hideProgressBar: false,
@@ -101,6 +67,7 @@ export default function VoteDetail() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
+      toastId: "amountError",
     });
 
   const confirmationMessage = () =>
@@ -112,6 +79,19 @@ export default function VoteDetail() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
+      toastId: "confirmationMessage",
+    });
+
+  const loginMessage = () =>
+    toast.error("Please login first!", {
+      position: "bottom-center",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      toastId: "loginMessage",
     });
 
   const [selected, setSelected] = useState(null);
@@ -132,6 +112,14 @@ export default function VoteDetail() {
       return true;
     }
     return false;
+  }
+
+  function verifyLogin() {
+    if (accounts[0]) {
+      openModal();
+    } else {
+      loginMessage();
+    }
   }
 
   function getType() {
@@ -201,13 +189,12 @@ export default function VoteDetail() {
                   </button>
                 ))}
                 <button
-                  type="submit"
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
                     isSelected()
-                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-200 focus:border-purple-200  cursor-pointer"
+                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200  cursor-pointer"
                       : "cursor-not-allowed"
                   }`}
-                  onClick={isSelected() ? openModal : null}
+                  onClick={isSelected() ? verifyLogin : null}
                 >
                   Vote
                 </button>
@@ -273,7 +260,7 @@ export default function VoteDetail() {
                             />
                             <button
                               onClick={() => {
-                                if (amount) {
+                                if (amount >= proposalContent.min_stake) {
                                   submitVote();
                                   confirmationMessage();
                                   setTimeout(() => {
