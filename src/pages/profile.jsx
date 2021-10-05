@@ -39,7 +39,7 @@ export default function Profile() {
 
   function PanelLeft() {
     return (
-      <div className="relative flex flex-col w-1/3 h-1/2 border border-gray-200 shadow-lg text-center rounded-lg">
+      <div className="relative flex flex-col lg:w-1/3 h-1/2 border border-gray-200 shadow-lg text-center rounded-lg">
         <div className="text-xl z-10 my-3">{sample_data.nickname}</div>
         <img
           className="rounded-full mx-auto w-1/2 h-1/2 z-10"
@@ -71,7 +71,7 @@ export default function Profile() {
     );
   }
 
-  function ProfileData({ header, info }) {
+  function HeaderTextFormat({ header, info }) {
     return (
       <div className="flex flex-col space-y-1 mb-1">
         <div className="text-lg font-medium cursor-default">{header}</div>
@@ -92,13 +92,38 @@ export default function Profile() {
     return (
       <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
         <div className="p-8">
-          <ProfileData header={"Hash ID"} info={accountHash} />
-          <ProfileData header={"Nickname"} info={sample_data["nickname"]} />
-          <ProfileData header={"Email"} info={sample_data["email"]} />
-          <ProfileData header={"Phone"} info={sample_data["phone"]} />
-          <ProfileData header={"Year"} info={"Year " + sample_data["year"]} />
-          <ProfileData header={"Department"} info={sample_data["department"]} />
+          <HeaderTextFormat header={"Hash ID"} info={accountHash} />
+          <HeaderTextFormat
+            header={"Nickname"}
+            info={sample_data["nickname"]}
+          />
+          <HeaderTextFormat header={"Email"} info={sample_data["email"]} />
+          <HeaderTextFormat header={"Phone"} info={sample_data["phone"]} />
+          <HeaderTextFormat
+            header={"Year"}
+            info={"Year " + sample_data["year"]}
+          />
+          <HeaderTextFormat
+            header={"Department"}
+            info={sample_data["department"]}
+          />
         </div>
+      </div>
+    );
+  }
+
+  function SettingsTab() {
+    return (
+      <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
+        <div className="p-8">Settings</div>
+      </div>
+    );
+  }
+
+  function HistoryTab() {
+    return (
+      <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
+        <div className="p-8">History</div>
       </div>
     );
   }
@@ -108,21 +133,12 @@ export default function Profile() {
       return <ProfileTab />;
     }
     if (page === "Settings") {
-      return (
-        <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-          <div className="p-8">Settings</div>
-        </div>
-      );
+      return <SettingsTab />;
     }
-
     if (page === "History") {
-      return (
-        <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-          <div className="p-8">History</div>
-        </div>
-      );
+      return <HistoryTab />;
     }
-    return <div className="class">HOW</div>;
+    return <div className="class">Impossible Div</div>;
   }
 
   return (
@@ -131,9 +147,16 @@ export default function Profile() {
       <div className="flex flex-col max-w-7xl mx-auto p-2 mb-10">
         <div className="flex flex-col px-4">
           <div className="text-4xl text-gray-700 my-4">User Profile</div>
-          <div className="flex flex-row space-x-6">
-            <PanelLeft />
-            <PanelRight />
+          <div className="flex items-center">
+            <div className="hidden lg:flex flex-row space-x-6">
+              <PanelLeft />
+              <PanelRight />
+            </div>
+            <div className="flex flex-col w-full lg:hidden space-y-4">
+              <ProfileTab />
+              <SettingsTab />
+              <HistoryTab />
+            </div>
           </div>
         </div>
       </div>
