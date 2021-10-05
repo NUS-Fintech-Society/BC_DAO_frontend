@@ -1,8 +1,7 @@
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { getUser, getReadableDate } from "./voteUtils";
-import { getCurrentDateTime } from "./voteUtils";
 import { getShortAccountHash } from "../api/utils";
+import { getCurrentDateTime, getReadableDate } from "./voteUtils";
 
 export default function VoteListItem({ content }) {
   let { url } = useRouteMatch();

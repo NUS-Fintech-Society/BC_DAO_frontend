@@ -1,19 +1,12 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
-import { getReadableDate } from "./voteUtils";
-import projectId from "../../secrets.json";
-import {
-  getProposalHashes,
-  getAllProposals,
-  getProposalInfo,
-  retrieveProposal,
-  sendVote,
-} from "../api/Api";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { getShortAccountHash } from "../api/utils";
-
+import React, { Fragment, useEffect, useState } from "react";
+import { Link, useRouteMatch } from "react-router-dom";
 import { toast } from "react-toastify";
+import projectId from "../../secrets.json";
+import { getProposalInfo, retrieveProposal, sendVote } from "../api/Api";
+import { getShortAccountHash } from "../api/utils";
+import { getReadableDate } from "./voteUtils";
 
 export default function VoteDetail() {
   //Address routing
@@ -38,7 +31,7 @@ export default function VoteDetail() {
       });
     }
     getProposal();
-  }, [ipfsHash]);
+  }, [ipfsHash, web3]);
 
   console.log(proposalInfo);
   console.log(proposalContent);
