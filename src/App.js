@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages";
 import Vote from "./pages/vote";
+import Profile from "./pages/profile";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/vote" component={Vote} />
+          <Route path="/profile" component={Profile} />
           <Redirect to="/" />
         </Switch>
       </Router>

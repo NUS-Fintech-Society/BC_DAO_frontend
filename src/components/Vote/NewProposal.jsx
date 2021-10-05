@@ -182,7 +182,7 @@ export default function NewProposal() {
                       disabled={!isValid}
                       className={
                         !isValid
-                          ? `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-gray-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-gray-600 hover:border-4 transition-all cursor-not-allowed`
+                          ? `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-gray-400 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-gray-400 hover:border-4 transition-all cursor-not-allowed`
                           : `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all`
                       }
                       onClick={() => {

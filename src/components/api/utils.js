@@ -10,3 +10,11 @@ export function getShortAccountHash(account) {
     return "Login";
   }
 }
+
+export function getAccountHash(accounts, networkId) {
+  if (accounts && accounts.length && networkId === 3) {
+    return accounts[0];
+  } else {
+    return false;
+  }
+}
