@@ -5,6 +5,7 @@ import { useLocation } from "react-router";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import { projectId } from "../../secrets.json";
 import { ToastContainer, toast } from "react-toastify";
+import { getShortAccountHash, getAccountHash } from "../api/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/" },
@@ -25,6 +26,7 @@ export default function NabBar() {
     [web3Context]
   );
   const location = useLocation();
+  const accountHash = getAccountHash(accounts, networkId);
 
   //Toast info
   const copyNotification = () =>
@@ -38,40 +40,20 @@ export default function NabBar() {
       progress: undefined,
     });
 
-  function getAccountHash() {
-    if (accounts && accounts.length && networkId === 3) {
-      return accounts[0];
-    } else {
-      return false;
-    }
-  }
-
-  function getShortAccountHash() {
-    const accountHash = getAccountHash();
-    if (accountHash) {
-      return (
-        accountHash.slice(0, 6) +
-        "..." +
-        accountHash.slice(-4, accountHash.length)
-      );
-    } else {
-      return "Login";
-    }
-  }
-
   function checkAccount() {
     if (accounts && accounts.length) {
-      const accountHash = getShortAccountHash();
       return (
         <div
           className="block px-4 py-2 w-full text-left cursor-pointer"
           onClick={() => {
             copyNotification();
-            navigator.clipboard.writeText(getAccountHash());
+            navigator.clipboard.writeText(accountHash);
           }}
         >
           <span> Logged in as </span>
-          <span className="font-semibold text-gray-500">{accountHash}</span>
+          <span className="font-semibold text-gray-500">
+            {getShortAccountHash(accounts)}
+          </span>
           <ToastContainer
             position="bottom-center"
             autoClose={3000}
@@ -185,11 +167,11 @@ export default function NabBar() {
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
-                            Your Profile
+                            Profile
                           </a>
                         )}
                       </Menu.Item>
-                      <Menu.Item>
+                      {/* <Menu.Item>
                         {({ active }) => (
                           <a
                             href="/setting"
@@ -201,7 +183,7 @@ export default function NabBar() {
                             Settings
                           </a>
                         )}
-                      </Menu.Item>
+                      </Menu.Item> */}
                       <Menu.Item>
                         {({ active }) => (
                           <div

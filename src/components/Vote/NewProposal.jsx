@@ -1,29 +1,51 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Field, FieldArray, Form, Formik } from "formik";
+import { useWeb3 } from "@openzeppelin/network/lib/react";
+import { Field, FieldArray, Form, Formik, useFormikContext } from "formik";
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { retrieveProposal } from "../api/Api";
+import projectId from "../../secrets.json";
+import { createProposal } from "../api/Api";
+import { getCurrentDateTime, showCurrentDate } from "./voteUtils";
+import DatePicker from "react-datepicker";
 
 const formTypes = [
   { label: "Loss Voting", value: "loss" },
   { label: "Allocation Proposal", value: "allocation" },
 ];
 
-let initialType = "loss";
+const minStakeValues = [
+  { label: "No Minimum", value: 0 },
+  { label: "1 coin", value: 1 },
+  { label: "5 coins", value: 5 },
+  { label: "10 coins", value: 10 },
+];
 
-// add number to options
+let initialType = "loss";
+let initialMinStakeVal = 0;
+
 const initialValues = {
   title: "",
   content: "",
   type: initialType,
   options: [{ id: 1, label: "" }],
+  min_stake: initialMinStakeVal,
+  end_date: getCurrentDateTime(),
 };
 
-const finalValues = {
-  //need number of options that can be passed
-};
+async function submitProposal(web3, account, values) {
+  const finalValues = {
+    ...values,
+    create_date: getCurrentDateTime(),
+    numOfOptions: values.options.length,
+    isLossVoting: values.type === "loss",
+    isAllocationProposal: values.type === "allocation",
+    userId: account,
+  };
+
+  const create = await createProposal(web3, account, finalValues);
+  return create;
+}
 
 const proposalSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -32,17 +54,20 @@ const proposalSchema = Yup.object().shape({
 });
 
 export default function NewProposal() {
+  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const { lib: web3, accounts } = web3Context;
+
   //Toast for error messages
-  const errorNotification = (error) =>
-    toast.info(error, {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-    });
+  // const errorNotification = (error) =>
+  //   toast.info(error, {
+  //     position: "bottom-center",
+  //     autoClose: 3000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: false,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
 
   return (
     <div className="w-full h-full">
@@ -56,28 +81,24 @@ export default function NewProposal() {
           </Link>
         </div>
       </div>
-      <button
-        onClick={async () => {
-          const temp = await retrieveProposal(
-            "QmW1WS4o1vELi8khY8RAQ5HVzBGCak5wwqjdERu8s9kcZ3"
-          );
-          console.log(JSON.stringify(temp));
-        }}
-      >
-        TestButton2
-      </button>
       <div className="max-w-7xl x-auto px-8 py-2">
         <Formik
           initialValues={initialValues}
           validationSchema={proposalSchema}
-          onSubmit={(values, actions) => {
-            console.log(JSON.stringify(values));
-            actions.setSubmitting(false);
-            // getProposal(web3);
+          validateOnMount={true}
+          onSubmit={async (values, actions) => {
+            // console.log(JSON.stringify(values));
+            // submitProposal(web3, accounts[0], values);
+            // actions.setSubmitting(false);
           }}
         >
-          {({ values, errors, touched }) => (
+          {({ values, errors, touched, isValid, setSubmitting }) => (
             <Form>
+              <div className="hidden">
+                {(values.min_stake = initialMinStakeVal)}
+                {(values.type = initialType)}
+              </div>
+
               <div className="flex flex-col text-gray-600 lg:flex-row lg:space-x-4">
                 <div className="flex-col w-full">
                   <Field
@@ -153,24 +174,20 @@ export default function NewProposal() {
                     Actions
                   </div>
                   <div className="p-4">
-                    <Field
-                      as="select"
-                      name="type"
-                      component={CustomButtonInput}
-                    />
+                    <Field name="type" component={CustomVoteInput} />
+                    <Field name="min_stake" component={CustomStakeInput} />
+                    <Field name="end_date" component={CustomDateInput} />
                     <button
                       type="submit"
-                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all"
+                      disabled={!isValid}
+                      className={
+                        !isValid
+                          ? `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-gray-400 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-gray-400 hover:border-4 transition-all cursor-not-allowed`
+                          : `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all`
+                      }
                       onClick={() => {
-                        if (errors.title && touched.title) {
-                          errorNotification(errors.title);
-                        }
-                        if (errors.content && touched.content) {
-                          errorNotification(errors.content);
-                        }
-                        if (errors.options && touched.options) {
-                          errorNotification(errors.options);
-                        }
+                        submitProposal(web3, accounts[0], values);
+                        setSubmitting(false);
                       }}
                     >
                       Publish
@@ -236,7 +253,120 @@ const CustomOptionInput = ({ field, ...props }) => (
   </div>
 );
 
-function CustomButtonInput({ field, ...props }) {
+function CustomStakeInput({ field, ...props }) {
+  let [isOpen, setIsOpen] = useState(false);
+  let [stakeLabel, setStakeLabel] = useState(getLabel());
+  let buttonRef = useRef(minStakeValues.map(() => React.createRef()));
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function setStake(stake) {
+    initialMinStakeVal = stake.value;
+    field.min_stake = stake.value;
+    setStakeLabel(stake.label);
+    closeModal();
+  }
+
+  // Get the label corresponding to the value in minStakeValues
+  function getLabel() {
+    try {
+      return minStakeValues.find((stake) => stake.value === field.value).label;
+    } catch (error) {
+      return "Select Minimum Stake";
+    }
+  }
+
+  // Get the position of the label in minStakeValues using value
+  function getPosition() {
+    return minStakeValues.findIndex((stake) => stake.value === field.value);
+  }
+
+  return (
+    <>
+      <div className="flex flex-col w-full">
+        <button
+          className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all"
+          onClick={openModal}
+        >
+          {stakeLabel}
+        </button>
+      </div>
+      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={closeModal}
+          initialFocus={buttonRef.current[getPosition()]}
+        >
+          <div className="min-h-screen px-4 text-center">
+            {/* Allow for clicking outside to close modal*/}
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900 cursor-default"
+                >
+                  Select Minimum Stake
+                </Dialog.Title>
+                <div className="mt-2">
+                  {minStakeValues.map((stake, index) => (
+                    <button
+                      key={stake.value}
+                      value={stake.value}
+                      type="button"
+                      {...field}
+                      {...props}
+                      ref={buttonRef.current[index]}
+                      className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
+                      onClick={() => setStake(stake)}
+                    >
+                      {stake.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
+
+function CustomVoteInput({ field, ...props }) {
   let [isOpen, setIsOpen] = useState(false);
   let buttonRef = useRef(formTypes.map(() => React.createRef()));
 
@@ -325,8 +455,9 @@ function CustomButtonInput({ field, ...props }) {
                 <div className="mt-2">
                   {formTypes.map((type, index) => (
                     <button
-                      key={index}
+                      key={type.value}
                       value={type.value}
+                      type="button"
                       {...field}
                       {...props}
                       ref={buttonRef.current[index]}
@@ -336,6 +467,100 @@ function CustomButtonInput({ field, ...props }) {
                       {type.label}
                     </button>
                   ))}
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
+
+function CustomDateInput({ field, ...props }) {
+  const { setFieldValue } = useFormikContext();
+  let [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  return (
+    <>
+      <div className="flex flex-col w-full">
+        <button
+          className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all"
+          onClick={openModal}
+        >
+          End Date: {showCurrentDate(field.value)}
+        </button>
+      </div>
+      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={closeModal}
+        >
+          <div className="min-h-screen px-4 text-center">
+            {/* Allow for clicking outside to close modal*/}
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-min px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900 cursor-default text-center"
+                >
+                  Select Date
+                </Dialog.Title>
+                <div className="mt-2">
+                  <DatePicker
+                    {...field}
+                    {...props}
+                    selected={(field.value && new Date(field.value)) || null}
+                    onChange={(val) => {
+                      setFieldValue(field.name, val.getTime());
+                    }}
+                    inline
+                    className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  />
+                  <div className="text-center">
+                    <button
+                      className="rounded-full border border-purple-400 p-1 px-3 text-purple-600 text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent focus:bg-gray-100"
+                      onClick={closeModal}
+                    >
+                      Confirm
+                    </button>
+                  </div>
                 </div>
               </div>
             </Transition.Child>
