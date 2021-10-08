@@ -39,7 +39,7 @@ export default function Profile() {
 
   function PanelLeft() {
     return (
-      <div className="relative flex flex-col lg:w-1/3 h-1/2 border border-gray-200 shadow-lg text-center rounded-lg">
+      <div className="relative flex flex-col border border-gray-200 shadow-lg text-center rounded-lg">
         <div className="text-xl z-10 my-3">{sample_data.nickname}</div>
         <img
           className="rounded-full mx-auto w-1/2 h-1/2 z-10"
@@ -49,19 +49,31 @@ export default function Profile() {
         <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
         <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">
           <div
-            className="cursor-pointer hover:text-gray-400"
+            className={
+              page === "Profile"
+                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
+                : "cursor-pointer hover:text-gray-400"
+            }
             onClick={() => setPage("Profile")}
           >
             Profile
           </div>
           <div
-            className="cursor-pointer hover:text-gray-400"
+            className={
+              page === "Settings"
+                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
+                : "cursor-pointer hover:text-gray-400"
+            }
             onClick={() => setPage("Settings")}
           >
             Settings
           </div>
           <div
-            className="cursor-pointer hover:text-gray-400"
+            className={
+              page === "History"
+                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
+                : "cursor-pointer hover:text-gray-400"
+            }
             onClick={() => setPage("History")}
           >
             History
@@ -74,9 +86,11 @@ export default function Profile() {
   function HeaderTextFormat({ header, info }) {
     return (
       <div className="flex flex-col space-y-1 mb-1">
-        <div className="text-lg font-medium cursor-default">{header}</div>
+        <div className="text-lg font-medium cursor-default line-clamp-1">
+          {header}
+        </div>
         <div
-          className="text-md font-medium text-gray-500 cursor-pointer"
+          className="text-md font-medium text-gray-500 cursor-pointer line-clamp-1"
           onClick={() => {
             copyNotification();
             navigator.clipboard.writeText(info);
@@ -92,7 +106,10 @@ export default function Profile() {
     return (
       <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
         <div className="p-8">
-          <HeaderTextFormat header={"Hash ID"} info={accountHash} />
+          <HeaderTextFormat
+            header={"Hash ID"}
+            info={accountHash ? accountHash : "Login to see account hash"}
+          />
           <HeaderTextFormat
             header={"Nickname"}
             info={sample_data["nickname"]}
@@ -148,8 +165,10 @@ export default function Profile() {
         <div className="flex flex-col px-4">
           <div className="text-4xl text-gray-700 my-4">User Profile</div>
           <div className="flex items-center">
-            <div className="hidden lg:flex flex-row space-x-6">
-              <PanelLeft />
+            <div className="hidden lg:flex flex-row space-x-6 w-full">
+              <div className="w-1/3">
+                <PanelLeft />
+              </div>
               <PanelRight />
             </div>
             <div className="flex flex-col w-full lg:hidden space-y-4">

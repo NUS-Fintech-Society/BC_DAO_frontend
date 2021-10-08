@@ -27,12 +27,14 @@ export default function VoteList() {
   }, [web3]);
 
   return (
-    <div className="flex flex-col p-2 space-y-4">
-      {proposalList
-        ? proposalList.map((vote) => (
-            <VoteListItem content={vote} key={vote.ipfs} />
-          ))
-        : null}
+    <div className="flex flex-col space-y-4">
+      {proposalList ? (
+        proposalList.map((vote) => (
+          <VoteListItem content={vote} key={vote.ipfs} />
+        ))
+      ) : (
+        <VoteListItem skeleton={true} />
+      )}
     </div>
   );
 }
