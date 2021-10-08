@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import projectId from "../../secrets.json";
 import { getProposalInfo, retrieveProposal, sendVote } from "../api/Api";
 import { getShortAccountHash } from "../api/utils";
@@ -76,7 +76,7 @@ export default function VoteDetail() {
     });
 
   const loginMessage = () =>
-    toast.error("Please login first!", {
+    toast("Please login first!", {
       position: "bottom-center",
       autoClose: 4000,
       hideProgressBar: false,
@@ -107,12 +107,11 @@ export default function VoteDetail() {
     return false;
   }
 
-  function verifyLogin() {
+  function isLoggedIn() {
     if (accounts[0]) {
-      openModal();
-    } else {
-      loginMessage();
+      return true;
     }
+    return false;
   }
 
   function getType() {
@@ -183,11 +182,11 @@ export default function VoteDetail() {
                 ))}
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
-                    isSelected()
+                    isSelected() && isLoggedIn()
                       ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200  cursor-pointer"
                       : "cursor-not-allowed"
                   }`}
-                  onClick={isSelected() ? verifyLogin : null}
+                  onClick={isSelected() && isLoggedIn() ? openModal() : null}
                 >
                   Vote
                 </button>
@@ -368,7 +367,7 @@ const ResultItem = ({ choice, percentage, label }) => {
     <div className="flex flex-col">
       <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
         <div className="class">{choice}</div>
-        <div className="text-gray-700">{label} NUSC</div>
+        <div className="text-gray-700">{label} ABCDao</div>
       </div>
       <div className="shadow-lg">
         <div className="w-full h-1 rounded-full bg-gray-200"></div>
