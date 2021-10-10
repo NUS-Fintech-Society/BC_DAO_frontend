@@ -118,7 +118,7 @@ export default function NewProposal() {
                     touched={touched}
                   />
                   <div className="flex-col w-full border-2 border-gray-200 rounded-xl my-6">
-                    <div className="flex flex-row space-x-2  items-end bg-indigo-100 px-4 py-3 text-2xl font-semibold rounded-t-lg">
+                    <div className="flex flex-row space-x-2  items-end bg-blue-100 px-4 py-3 text-2xl font-semibold rounded-t-lg">
                       <span>Choices</span>
                       <div className="class">
                         {errors.options && touched.options ? (
@@ -170,7 +170,7 @@ export default function NewProposal() {
                   </div>
                 </div>
                 <div className="flex-col lg:w-96 bg-white rounded-xl border border-gray-200">
-                  <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+                  <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                     Actions
                   </div>
                   <div className="p-4">

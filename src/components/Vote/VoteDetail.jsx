@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import projectId from "../../secrets.json";
 import { getProposalInfo, retrieveProposal, sendVote } from "../api/Api";
 import { getShortAccountHash } from "../api/utils";

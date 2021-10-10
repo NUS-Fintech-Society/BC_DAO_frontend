@@ -1,10 +1,9 @@
 import { useWeb3 } from "@openzeppelin/network/lib/react";
 import React, { useState } from "react";
-import { useRouteMatch } from "react-router-dom";
-import { projectId } from "../secrets.json";
-import NavBar from "../components/Layout/NavBar";
 import { getAccountHash } from "../components/api/utils";
-import { ToastContainer, toast } from "react-toastify";
+import NavBar from "../components/Layout/NavBar";
+import HeaderTextFormat from "../components/TextFormats/HeaderTextFormat";
+import { projectId } from "../secrets.json";
 
 const sample_data = {
   id: 1,
@@ -20,22 +19,25 @@ const sample_data = {
 };
 
 export default function Profile() {
-  let { path, url } = useRouteMatch();
   const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
   const { networkId, accounts } = web3Context;
   const [page, setPage] = useState("Profile");
   const accountHash = getAccountHash(accounts, networkId);
 
-  const copyNotification = () =>
-    toast.info("Copied to clipboard", {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-    });
+  function PanelItem({ label }) {
+    return (
+      <div
+        className={
+          page === label
+            ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300"
+            : "cursor-pointer hover:text-gray-400"
+        }
+        onClick={() => setPage(label)}
+      >
+        {label}
+      </div>
+    );
+  }
 
   function PanelLeft() {
     return (
@@ -48,55 +50,9 @@ export default function Profile() {
         />
         <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
         <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">
-          <div
-            className={
-              page === "Profile"
-                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
-                : "cursor-pointer hover:text-gray-400"
-            }
-            onClick={() => setPage("Profile")}
-          >
-            Profile
-          </div>
-          <div
-            className={
-              page === "Settings"
-                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
-                : "cursor-pointer hover:text-gray-400"
-            }
-            onClick={() => setPage("Settings")}
-          >
-            Settings
-          </div>
-          <div
-            className={
-              page === "History"
-                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
-                : "cursor-pointer hover:text-gray-400"
-            }
-            onClick={() => setPage("History")}
-          >
-            History
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function HeaderTextFormat({ header, info }) {
-    return (
-      <div className="flex flex-col space-y-1 mb-1">
-        <div className="text-lg font-medium cursor-default line-clamp-1">
-          {header}
-        </div>
-        <div
-          className="text-md font-medium text-gray-500 cursor-pointer line-clamp-1"
-          onClick={() => {
-            copyNotification();
-            navigator.clipboard.writeText(info);
-          }}
-        >
-          {info}
+          <PanelItem label="Profile" />
+          <PanelItem label="Settings" />
+          <PanelItem label="History" />
         </div>
       </div>
     );

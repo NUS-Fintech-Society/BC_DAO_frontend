@@ -6,13 +6,6 @@ import { getCurrentDateTime, getReadableDate } from "./voteUtils";
 export default function VoteListItem({ content, skeleton }) {
   let { url } = useRouteMatch();
 
-  function cutParagraph(paragraph) {
-    if (paragraph.length > 100) {
-      return paragraph.substring(0, 500) + "...";
-    }
-    return paragraph;
-  }
-
   if (skeleton) {
     return (
       <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
