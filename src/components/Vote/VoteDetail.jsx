@@ -33,9 +33,6 @@ export default function VoteDetail() {
     getProposal();
   }, [ipfsHash, web3]);
 
-  console.log(proposalInfo);
-  console.log(proposalContent);
-
   //Model Handling
   let [isOpen, setIsOpen] = useState(false);
 
@@ -73,18 +70,6 @@ export default function VoteDetail() {
       draggable: true,
       progress: undefined,
       toastId: "confirmationMessage",
-    });
-
-  const loginMessage = () =>
-    toast("Please login first!", {
-      position: "bottom-center",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      toastId: "loginMessage",
     });
 
   const [selected, setSelected] = useState(null);
@@ -182,11 +167,11 @@ export default function VoteDetail() {
                 ))}
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
-                    isSelected() && isLoggedIn()
-                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200  cursor-pointer"
+                    isSelected
+                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer"
                       : "cursor-not-allowed"
                   }`}
-                  onClick={isSelected() && isLoggedIn() ? openModal() : null}
+                  onClick={isSelected && isLoggedIn ? openModal : null}
                 >
                   Vote
                 </button>
@@ -399,8 +384,6 @@ function PreviousVotesList({ proposalContent, proposalInfo }) {
       setCurrentResults(getCurrentResults());
     }
   }, [proposalContent, proposalInfo]);
-
-  console.log(currentResults);
 
   return (
     <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
