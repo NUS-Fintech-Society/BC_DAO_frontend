@@ -93,7 +93,7 @@ export default function VoteDetail() {
   }
 
   function isLoggedIn() {
-    if (accounts[0]) {
+    if (accounts.length > 0) {
       return true;
     }
     return false;
@@ -146,7 +146,7 @@ export default function VoteDetail() {
               </div>
             </div>
             <div className="flex-col bg-white rounded-xl border border-gray-200">
-              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+              <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                 Cast your vote
               </div>
               <div className="p-4">
@@ -154,7 +154,7 @@ export default function VoteDetail() {
                   <button
                     key={option.id}
                     type="submit"
-                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all 
+                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all 
                     ${
                       index === selected
                         ? "ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50"
@@ -167,11 +167,11 @@ export default function VoteDetail() {
                 ))}
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
-                    isSelected
+                    isSelected() && isLoggedIn()
                       ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer"
                       : "cursor-not-allowed"
                   }`}
-                  onClick={isSelected && isLoggedIn ? openModal : null}
+                  onClick={isSelected() && isLoggedIn() ? openModal : null}
                 >
                   Vote
                 </button>
@@ -266,7 +266,7 @@ export default function VoteDetail() {
           </div>
           <div className="flex flex-col xl:w-96 space-y-6">
             <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+              <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                 Information
               </div>
               <div className="p-4 flex flex-col space-y-2">
@@ -294,7 +294,7 @@ export default function VoteDetail() {
               </div>
             </div>
             <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-              <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+              <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                 Current Results
               </div>
               {proposalContent.type === "loss" ? (
@@ -387,7 +387,7 @@ function PreviousVotesList({ proposalContent, proposalInfo }) {
 
   return (
     <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
-      <div className="border-b border-gray-200 bg-indigo-100 px-8 py-3 rounded-t-lg font-bold text-xl">
+      <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
         Vote History
       </div>
       <div className="flex flex-col">
@@ -406,7 +406,7 @@ function PreviousVotesList({ proposalContent, proposalInfo }) {
           </div>
         )}
       </div>
-      <div className="border-t border-gray-200 bg-indigo-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
+      <div className="border-t border-gray-200 bg-blue-100 px-8 py-3 rounded-b-lg font-bold text-base text-center cursor-pointer">
         See More
       </div>
     </div>
@@ -443,14 +443,16 @@ function CurrentResultsLoss({ proposalContent, proposalInfo }) {
   return (
     <div className="p-4 flex flex-col space-y-2">
       {currentResults.length !== 0 ? (
-        currentResults.map((result, index) => (
-          <ResultItem
-            key={index}
-            choice={result.choice}
-            percentage={result.percentage}
-            label={result.label}
-          />
-        ))
+        currentResults
+          .sort((a, b) => b.percentage - a.percentage)
+          .map((result, index) => (
+            <ResultItem
+              key={index}
+              choice={result.choice}
+              percentage={result.percentage}
+              label={result.label}
+            />
+          ))
       ) : (
         <div className="font-semibold px-4">Be the first to vote!</div>
       )}
@@ -489,14 +491,16 @@ function CurrentResultsAllocation({ proposalContent, proposalInfo }) {
   return (
     <div className="p-4 flex flex-col space-y-2">
       {currentResults.length !== 0 ? (
-        currentResults.map((result, index) => (
-          <ResultItem
-            key={index}
-            choice={result.choice}
-            percentage={result.percentage}
-            label={result.label}
-          />
-        ))
+        currentResults
+          .sort((a, b) => b.percentage - a.percentage)
+          .map((result, index) => (
+            <ResultItem
+              key={index}
+              choice={result.choice}
+              percentage={result.percentage}
+              label={result.label}
+            />
+          ))
       ) : (
         <div className="font-semibold px-4">Be the first to vote!</div>
       )}
