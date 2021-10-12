@@ -15,7 +15,7 @@ export async function uploadProposal(text) {
 }
 
 export async function retrieveProposal(proposalHash) {
-  return fetch("http://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
+  return fetch("https://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
     x.json()
   );
 }
