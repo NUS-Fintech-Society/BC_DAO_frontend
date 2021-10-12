@@ -10,10 +10,12 @@ export default function VoteList() {
   const { lib: web3 } = web3Context;
 
   const [proposalList, setProposalList] = useState([]);
+  const [proposalToShow, setProposalToShow] = useState(0);
 
   useEffect(() => {
     async function getAllProposals() {
       await getProposalHashes(web3).then((proposalData) => {
+        setProposalToShow(proposalData.length);
         proposalData.forEach(async (element) => {
           if (element) {
             await retrieveProposal(element).then((data) => {
@@ -27,12 +29,14 @@ export default function VoteList() {
     getAllProposals();
   }, [web3]);
 
+  console.log(proposalList);
+
   return (
     <div className="flex flex-col space-y-4">
-      {proposalList ? (
-        proposalList.map((vote) => (
-          <VoteListItem content={vote} key={vote.ipfs} />
-        ))
+      {proposalList.length === proposalToShow ? (
+        proposalList
+          .sort((a, b) => b.create_date - a.create_date)
+          .map((vote) => <VoteListItem content={vote} key={vote.ipfs} />)
       ) : (
         <VoteListItem skeleton={true} />
       )}

@@ -36,6 +36,7 @@ export default function Vote() {
           className="rounded-full mx-auto w-1/2 h-1/2 z-10"
           src="https://rehabconceptspt.com/wp-content/uploads/2016/06/placeholder-640-square.jpg"
           alt=""
+          placeholder="placeholder"
         />
         <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
         <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">

@@ -8,8 +8,22 @@ export default function VoteListItem({ content, skeleton }) {
 
   if (skeleton) {
     return (
-      <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
-        <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-screen"></div>
+      <div className="flex flex-col space-y-4">
+        <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
+          <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-56"></div>
+        </div>
+        <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
+          <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-56"></div>
+        </div>
+        <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
+          <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-56"></div>
+        </div>
+        <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
+          <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-56"></div>
+        </div>
+        <div className="border border-gray-100 rounded-md w-full hover:bg-indigo-50 shadow-md">
+          <div className="animate-pulse bg-gray-100 py-4 px-4 flex flex-col text-gray-400 hover:text-gray-800 cursor-pointer h-56"></div>
+        </div>
       </div>
     );
   }
