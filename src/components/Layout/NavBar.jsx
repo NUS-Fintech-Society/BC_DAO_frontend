@@ -7,8 +7,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { getShortAccountHash, getAccountHash } from "../api/utils";
 
 const navigation = [
-  { name: "Dashboard", href: `${process.env.PUBLIC_URL}/` },
-  { name: "Vote", href: `${process.env.PUBLIC_URL}/vote` },
+  { name: "Dashboard", href: `${process.env.PUBLIC_URL}#/` },
+  { name: "Vote", href: `${process.env.PUBLIC_URL}#/vote` },
 ];
 
 function classNames(...classes) {
@@ -162,7 +162,7 @@ export default function NabBar() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href={`${process.env.PUBLIC_URL}/profile`}
+                            href={`${process.env.PUBLIC_URL}#/profile`}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
