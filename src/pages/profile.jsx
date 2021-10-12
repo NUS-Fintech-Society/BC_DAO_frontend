@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { getAccountHash } from "../components/api/utils";
 import NavBar from "../components/Layout/NavBar";
 import HeaderTextFormat from "../components/TextFormats/HeaderTextFormat";
-import { projectId } from "../secrets.json";
 
 const sample_data = {
   id: 1,
@@ -19,7 +18,9 @@ const sample_data = {
 };
 
 export default function Profile() {
-  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
+  );
   const { networkId, accounts } = web3Context;
   const [page, setPage] = useState("Profile");
   const accountHash = getAccountHash(accounts, networkId);

@@ -3,7 +3,6 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { projectId } from "../../secrets.json";
 import { ToastContainer, toast } from "react-toastify";
 import { getShortAccountHash, getAccountHash } from "../api/utils";
 
@@ -18,7 +17,9 @@ function classNames(...classes) {
 
 export default function NabBar() {
   //Web 3 Init and info
-  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
+  );
   const { networkId, accounts, providerName } = web3Context;
 
   const requestAccess = useCallback(
