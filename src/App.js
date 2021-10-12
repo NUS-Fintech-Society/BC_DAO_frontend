@@ -13,14 +13,12 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <div>
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/vote" component={Vote} />
-          <Route path="/profile" component={Profile} />
-          <Redirect to="/" />
-        </Switch>
-      </Router>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/vote" component={Vote} />
+        <Route path="/profile" component={Profile} />
+        <Redirect to="/" />
+      </Switch>
     </div>
   );
 }
