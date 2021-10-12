@@ -4,46 +4,46 @@ import NavBar from "../components/Layout/NavBar";
 import VoteList from "../components/Vote/VoteList";
 import VoteDetail from "../components/Vote/VoteDetail";
 import NewProposal from "../components/Vote/NewProposal";
+import HeaderTextFormat from "../components/TextFormats/HeaderTextFormat";
+import IndividualLineFormat from "../components/TextFormats/IndividualLineFormat";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function Vote() {
   let { path, url } = useRouteMatch();
   const [page, setPage] = useState("Proposals");
 
+  function PanelItem({ label }) {
+    return (
+      <div
+        className={
+          page === label
+            ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300"
+            : "cursor-pointer hover:text-gray-400"
+        }
+        onClick={() => setPage(label)}
+      >
+        {label}
+      </div>
+    );
+  }
+
   function PanelLeft() {
     return (
       <div className="relative flex flex-col border border-gray-200 shadow-lg text-center rounded-lg">
         <div className="text-xl z-10 my-3">ABCDao</div>
+        {/* placeholder image */}
         <img
           className="rounded-full mx-auto w-1/2 h-1/2 z-10"
-          src="https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+          src="https://rehabconceptspt.com/wp-content/uploads/2016/06/placeholder-640-square.jpg"
           alt=""
         />
         <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
         <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">
-          <div
-            className={
-              page === "Proposals"
-                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
-                : "cursor-pointer hover:text-gray-400"
-            }
-            onClick={() => setPage("Proposals")}
-          >
-            Proposals
-          </div>
+          <PanelItem label="Proposals" />
           <div className="cursor-pointer hover:text-gray-400">
             <Link to={`${url}/new-proposal`}>New Proposal</Link>
           </div>
-          <div
-            className={
-              page === "About"
-                ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400"
-                : "cursor-pointer hover:text-gray-400"
-            }
-            onClick={() => setPage("About")}
-          >
-            About
-          </div>
+          <PanelItem label="About" />
         </div>
       </div>
     );
@@ -51,9 +51,33 @@ export default function Vote() {
 
   function AboutTab() {
     return (
-      <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-        <div className="p-8">ABOUT</div>
-      </div>
+      <>
+        <div className="flex flex-col w-full space-y-10">
+          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
+            <div className="p-8">
+              <HeaderTextFormat header="About" info="ABCDao" />
+              <HeaderTextFormat header="NetWork" info="Ethereum Mainnet" />
+              <HeaderTextFormat header="Proposal Validation" info="basic" />
+              <HeaderTextFormat header="Proposal Threshold" info="infinite" />
+              <HeaderTextFormat header="Strategie(s)" info="erc20-balance-of" />
+            </div>
+          </div>
+          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
+            <IndividualLineFormat header="Admins" />
+            <IndividualLineFormat header="John" />
+            <IndividualLineFormat header="Mark" />
+            <IndividualLineFormat header="Sally" />
+            <IndividualLineFormat header="Tim" type="last" />
+          </div>
+
+          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
+            <IndividualLineFormat header="Developers" />
+            <IndividualLineFormat header="Jun Xiong" />
+            <IndividualLineFormat header="Adithya Narayan" />
+            <IndividualLineFormat header="Bryan Woo" type="last" />
+          </div>
+        </div>
+      </>
     );
   }
 
