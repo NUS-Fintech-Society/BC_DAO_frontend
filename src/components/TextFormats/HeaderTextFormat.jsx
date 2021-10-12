@@ -19,10 +19,10 @@ export default function HeaderTextFormat({ header, info }) {
       </div>
       <div
         className="text-md font-medium text-gray-500 cursor-pointer line-clamp-1"
-        onClick={() => {
-          copyNotification();
-          navigator.clipboard.writeText(info);
-        }}
+        // onClick={() => {
+        //   copyNotification();
+        //   navigator.clipboard.writeText(info);
+        // }}
       >
         {info}
       </div>
