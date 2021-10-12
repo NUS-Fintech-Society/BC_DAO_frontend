@@ -3,13 +3,12 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { projectId } from "../../secrets.json";
 import { ToastContainer, toast } from "react-toastify";
 import { getShortAccountHash, getAccountHash } from "../api/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/" },
-  { name: "Vote", href: "/vote" },
+  { name: "Dashboard", href: `${process.env.PUBLIC_URL}#/` },
+  { name: "Vote", href: `${process.env.PUBLIC_URL}#/vote` },
 ];
 
 function classNames(...classes) {
@@ -18,7 +17,9 @@ function classNames(...classes) {
 
 export default function NabBar() {
   //Web 3 Init and info
-  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
+  );
   const { networkId, accounts, providerName } = web3Context;
 
   const requestAccess = useCallback(
@@ -161,7 +162,7 @@ export default function NabBar() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="/profile"
+                            href={`${process.env.PUBLIC_URL}#/profile`}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"

@@ -4,7 +4,6 @@ import { Field, FieldArray, Form, Formik, useFormikContext } from "formik";
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import projectId from "../../secrets.json";
 import { createProposal } from "../api/Api";
 import { getCurrentDateTime, showCurrentDate } from "./voteUtils";
 import DatePicker from "react-datepicker";
@@ -54,7 +53,9 @@ const proposalSchema = Yup.object().shape({
 });
 
 export default function NewProposal() {
-  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
+  );
   const { lib: web3, accounts } = web3Context;
 
   //Toast for error messages

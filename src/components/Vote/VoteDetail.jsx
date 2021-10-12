@@ -3,7 +3,6 @@ import { useWeb3 } from "@openzeppelin/network/lib/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { toast } from "react-toastify";
-import projectId from "../../secrets.json";
 import { getProposalInfo, retrieveProposal, sendVote } from "../api/Api";
 import { getShortAccountHash } from "../api/utils";
 import { getReadableDate } from "./voteUtils";
@@ -14,7 +13,9 @@ export default function VoteDetail() {
   const ipfsHash = params.id;
 
   //Web3 API Itialization
-  const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${projectId}`);
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
+  );
   const { lib: web3, accounts } = web3Context;
 
   //Getting proposal content
