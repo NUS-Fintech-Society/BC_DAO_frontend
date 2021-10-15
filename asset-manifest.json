@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/BC_DAO_frontend/static/css/main.99bd9e48.chunk.css",
-    "main.js": "/BC_DAO_frontend/static/js/main.f99b0e92.chunk.js",
-    "main.js.map": "/BC_DAO_frontend/static/js/main.f99b0e92.chunk.js.map",
+    "main.js": "/BC_DAO_frontend/static/js/main.857c1cd3.chunk.js",
+    "main.js.map": "/BC_DAO_frontend/static/js/main.857c1cd3.chunk.js.map",
     "runtime-main.js": "/BC_DAO_frontend/static/js/runtime-main.358df31b.js",
     "runtime-main.js.map": "/BC_DAO_frontend/static/js/runtime-main.358df31b.js.map",
     "static/css/2.e5ee45b6.chunk.css": "/BC_DAO_frontend/static/css/2.e5ee45b6.chunk.css",
-    "static/js/2.9b547f33.chunk.js": "/BC_DAO_frontend/static/js/2.9b547f33.chunk.js",
-    "static/js/2.9b547f33.chunk.js.map": "/BC_DAO_frontend/static/js/2.9b547f33.chunk.js.map",
+    "static/js/2.212865fc.chunk.js": "/BC_DAO_frontend/static/js/2.212865fc.chunk.js",
+    "static/js/2.212865fc.chunk.js.map": "/BC_DAO_frontend/static/js/2.212865fc.chunk.js.map",
     "static/js/3.902dc245.chunk.js": "/BC_DAO_frontend/static/js/3.902dc245.chunk.js",
     "static/js/3.902dc245.chunk.js.map": "/BC_DAO_frontend/static/js/3.902dc245.chunk.js.map",
     "index.html": "/BC_DAO_frontend/index.html",
     "static/css/2.e5ee45b6.chunk.css.map": "/BC_DAO_frontend/static/css/2.e5ee45b6.chunk.css.map",
     "static/css/main.99bd9e48.chunk.css.map": "/BC_DAO_frontend/static/css/main.99bd9e48.chunk.css.map",
-    "static/js/2.9b547f33.chunk.js.LICENSE.txt": "/BC_DAO_frontend/static/js/2.9b547f33.chunk.js.LICENSE.txt"
+    "static/js/2.212865fc.chunk.js.LICENSE.txt": "/BC_DAO_frontend/static/js/2.212865fc.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.358df31b.js",
     "static/css/2.e5ee45b6.chunk.css",
-    "static/js/2.9b547f33.chunk.js",
+    "static/js/2.212865fc.chunk.js",
     "static/css/main.99bd9e48.chunk.css",
-    "static/js/main.f99b0e92.chunk.js"
+    "static/js/main.857c1cd3.chunk.js"
   ]
 }
