@@ -29,8 +29,6 @@ export default function VoteList() {
     getAllProposals();
   }, [web3]);
 
-  console.log(proposalList);
-
   return (
     <div className="flex flex-col space-y-4">
       {proposalList.length === proposalToShow ? (

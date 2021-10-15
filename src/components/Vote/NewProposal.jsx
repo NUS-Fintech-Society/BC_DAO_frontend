@@ -87,10 +87,11 @@ export default function NewProposal() {
           initialValues={initialValues}
           validationSchema={proposalSchema}
           validateOnMount={true}
-          onSubmit={async (values, actions) => {
+          onSubmit={(values, actions, { resetForm }) => {
             // console.log(JSON.stringify(values));
             // submitProposal(web3, accounts[0], values);
             // actions.setSubmitting(false);
+            resetForm();
           }}
         >
           {({ values, errors, touched, isValid, setSubmitting }) => (

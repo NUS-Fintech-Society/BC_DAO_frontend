@@ -392,6 +392,7 @@ function PreviousVotesList({ proposalContent, proposalInfo }) {
         Vote History
       </div>
       <div className="flex flex-col">
+        <VoteItem choice="Choice" address="Address" amount="Amount" />
         {currentResults.length !== 0 ? (
           currentResults.map((result, index) => (
             <VoteItem
