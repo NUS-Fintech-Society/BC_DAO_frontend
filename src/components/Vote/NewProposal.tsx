@@ -11,7 +11,7 @@ import {
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import { createProposal } from "../api/api";
+import { createProposal, Proposal } from "../api/api";
 import { getCurrentDateTime, showCurrentDate } from "./voteUtils";
 import DatePicker from "react-datepicker";
 import Web3 from "web3";
@@ -40,17 +40,23 @@ const initialValues = {
   end_date: getCurrentDateTime(),
 };
 
-async function submitProposal(web3: Web3, account: string | null, values: any) {
-  const finalValues = {
-    ...values,
-    create_date: getCurrentDateTime(),
-    numOfOptions: values.options.length,
-    isLossVoting: values.type === "loss",
-    isAllocationProposal: values.type === "allocation",
-    userId: account,
-  };
+async function submitProposal(
+  web3: Web3,
+  account: string | null,
+  values: Proposal
+) {
+  if (account !== null) {
+    const finalValues = {
+      ...values,
+      create_date: getCurrentDateTime(),
+      numOfOptions: values.options.length,
+      isLossVoting: values.type === "loss",
+      isAllocationProposal: values.type === "allocation",
+      userId: account,
+    };
 
-  return createProposal(web3, account, finalValues);
+    return createProposal(web3, account, finalValues);
+  }
 }
 
 const proposalSchema = Yup.object().shape({
@@ -198,7 +204,7 @@ export default function NewProposal() {
                         submitProposal(
                           web3,
                           accounts ? accounts[0] : "",
-                          values
+                          values as any
                         );
                         setSubmitting(false);
                       }}
@@ -279,11 +285,6 @@ const CustomOptionInput = ({
     />
   </div>
 );
-
-interface Stake {
-  value: number;
-  label: string;
-}
 
 function CustomStakeInput({
   field,

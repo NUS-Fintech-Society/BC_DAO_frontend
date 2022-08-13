@@ -15,14 +15,14 @@ export default function VoteList() {
   useEffect(() => {
     async function getAllProposals() {
       await getProposalHashes(web3).then((proposalData) => {
+        console.log(proposalData);
         setProposalToShow(proposalData.length);
-        console.log("here", proposalData);
         proposalData.forEach(async (element) => {
           if (element) {
-            await retrieveProposal(element).then((data) => {
-              const new_data = { ...data, ipfs: element };
-              setProposalList((prevState) => [...prevState, new_data]);
-            });
+            // await retrieveProposal(element).then((data) => {
+            //   const new_data = { ...data, ipfs: element };
+            //   setProposalList((prevState) => [...prevState, new_data]);
+            // });
           }
         });
       });

@@ -12,6 +12,25 @@ import {
 import { getShortAccountHash } from "../api/utils";
 import { getReadableDate } from "./voteUtils";
 
+export interface VoteInfo {
+  proposalHash: string;
+  voter: string;
+  option: number;
+  amount: number;
+}
+
+export interface ProposalInfo {
+  ipfsHash: string;
+  numOfOptions: number;
+  minimumStakeValue: number;
+  stakedValuePerOption: number[];
+  votes: VoteInfo[];
+  isActive: boolean;
+  isLossVoting: boolean;
+  isAllocationProposal: boolean;
+  exists: boolean;
+}
+
 export default function VoteDetail() {
   //Address routing
   let { params } = useRouteMatch<{ id: string }>();
@@ -25,7 +44,7 @@ export default function VoteDetail() {
 
   //Getting proposal content
   const [proposalContent, setProposalContent] = useState<Proposal | null>(null);
-  const [proposalInfo, setProposalInfo] = useState(null);
+  const [proposalInfo, setProposalInfo] = useState<ProposalInfo | null>(null);
 
   useEffect(() => {
     async function getProposal() {
@@ -51,7 +70,7 @@ export default function VoteDetail() {
   }
 
   //Vote submission
-  const [amount, setAmount] = useState(null);
+  const [amount, setAmount] = useState<number | null>(null);
 
   //Amount Toasts
   const amountError = () =>
@@ -175,7 +194,9 @@ export default function VoteDetail() {
                       ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer"
                       : "cursor-not-allowed"
                   }`}
-                  onClick={isSelected() && isLoggedIn() ? openModal : null}
+                  onClick={() => {
+                    isSelected() && isLoggedIn() && openModal();
+                  }}
                 >
                   Vote
                 </button>
@@ -229,7 +250,9 @@ export default function VoteDetail() {
                           </Dialog.Title>
                           <div className="py-1 font-thin text-sm">
                             {isSelected()
-                              ? `You are voting for: ${proposalContent.options[selected].label}`
+                              ? `You are voting for: ${
+                                  proposalContent.options[selected!].label
+                                }`
                               : "Please choose an option!"}
                           </div>
                           <div className="flex flex-row py-2 items-center space-x-2 ">
@@ -237,11 +260,14 @@ export default function VoteDetail() {
                               type="number"
                               className="border border-gray-200 rounded-lg p-2 h-10 w-full shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
                               placeholder="amount"
-                              onChange={(e) => setAmount(e.target.value)}
+                              onChange={(e) => setAmount(+e.target.value)}
                             />
                             <button
                               onClick={() => {
-                                if (amount >= proposalContent.min_stake) {
+                                if (
+                                  amount !== null &&
+                                  amount >= proposalContent.min_stake
+                                ) {
                                   submitVote();
                                   confirmationMessage();
                                   setTimeout(() => {
@@ -263,10 +289,12 @@ export default function VoteDetail() {
                 </Transition>
               </div>
             </div>
-            <PreviousVotesList
-              proposalContent={proposalContent}
-              proposalInfo={proposalInfo}
-            />
+            {proposalInfo !== null && (
+              <PreviousVotesList
+                proposalContent={proposalContent}
+                proposalInfo={proposalInfo}
+              />
+            )}
           </div>
           <div className="flex flex-col xl:w-96 space-y-6">
             <div className="flex flex-col bg-white rounded-xl border border-gray-200 w-full">
@@ -284,7 +312,7 @@ export default function VoteDetail() {
                 />
                 <InformationItem
                   title="Min Stake Value"
-                  value={proposalContent.min_stake}
+                  value={String(proposalContent.min_stake)}
                 />
                 <InformationItem title="Voting system" value={getType()} />
                 <InformationItem
@@ -301,17 +329,18 @@ export default function VoteDetail() {
               <div className="border-b border-gray-200 bg-blue-100 px-8 py-3 rounded-t-lg font-bold text-xl">
                 Current Results
               </div>
-              {proposalContent.type === "loss" ? (
-                <CurrentResultsLoss
-                  proposalContent={proposalContent}
-                  proposalInfo={proposalInfo}
-                />
-              ) : (
-                <CurrentResultsAllocation
-                  proposalContent={proposalContent}
-                  proposalInfo={proposalInfo}
-                />
-              )}
+              {proposalInfo !== null &&
+                (proposalContent.type === "loss" ? (
+                  <CurrentResultsLoss
+                    proposalContent={proposalContent}
+                    proposalInfo={proposalInfo}
+                  />
+                ) : (
+                  <CurrentResultsAllocation
+                    proposalContent={proposalContent}
+                    proposalInfo={proposalInfo}
+                  />
+                ))}
             </div>
           </div>
         </div>
@@ -320,7 +349,7 @@ export default function VoteDetail() {
   );
 }
 
-const IsActiveTag = ({ content }: { content: string; isActive: boolean }) => {
+const IsActiveTag = ({ content }: { content: Proposal }) => {
   return content.isActive ? (
     <div className="flex bg-green-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
       Active
@@ -339,7 +368,7 @@ const VoteItem = ({
 }: {
   address: string;
   choice: string;
-  amount: number;
+  amount: string;
 }) => {
   return (
     <div className="grid grid-cols-3 text-base w-full text-center font-semibold text-gray-800 border-b-2 border-indigo-100 py-4 px-6">
@@ -355,7 +384,7 @@ const InformationItem = ({
   value,
 }: {
   title: string;
-  value: number;
+  value: string;
 }) => {
   return (
     <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
@@ -391,17 +420,29 @@ const ResultItem = ({
   );
 };
 
-function PreviousVotesList({ proposalContent, proposalInfo }) {
-  const [currentResults, setCurrentResults] = useState([]);
+interface Result {
+  address: string;
+  choice: string;
+  amount: string;
+}
+
+function PreviousVotesList({
+  proposalContent,
+  proposalInfo,
+}: {
+  proposalContent: Proposal;
+  proposalInfo: ProposalInfo;
+}) {
+  const [currentResults, setCurrentResults] = useState<Result[]>([]);
 
   useEffect(() => {
     function getCurrentResults() {
-      const temp = [];
+      const temp: Result[] = [];
       proposalInfo.votes.forEach((vote) => {
         temp.push({
           address: getShortAccountHash(vote.voter),
           choice: proposalContent.options[vote.option].label,
-          amount: vote.amount / 10 ** 18,
+          amount: String(vote.amount / 10 ** 18),
         });
       });
       return temp;
@@ -440,12 +481,24 @@ function PreviousVotesList({ proposalContent, proposalInfo }) {
   );
 }
 
-function CurrentResultsLoss({ proposalContent, proposalInfo }) {
-  const [currentResults, setCurrentResults] = useState([]);
+interface ResultsLoss {
+  choice: string;
+  percentage: number;
+  label: string;
+}
+
+function CurrentResultsLoss({
+  proposalContent,
+  proposalInfo,
+}: {
+  proposalContent: Proposal;
+  proposalInfo: ProposalInfo;
+}) {
+  const [currentResults, setCurrentResults] = useState<ResultsLoss[]>([]);
 
   useEffect(() => {
     function getCurrentResults() {
-      const temp = [];
+      const temp: ResultsLoss[] = [];
       const totalStaked = proposalInfo.stakedValuePerOption.reduce(
         (a, b) => a + b / 10 ** 18,
         0
@@ -457,7 +510,7 @@ function CurrentResultsLoss({ proposalContent, proposalInfo }) {
             Math.round(
               proposalInfo.stakedValuePerOption[index] / 10 ** 14 / totalStaked
             ) / 100,
-          label: proposalInfo.stakedValuePerOption[index] / 10 ** 18,
+          label: String(proposalInfo.stakedValuePerOption[index] / 10 ** 18),
         });
       });
       return temp;
@@ -487,12 +540,18 @@ function CurrentResultsLoss({ proposalContent, proposalInfo }) {
   );
 }
 
-function CurrentResultsAllocation({ proposalContent, proposalInfo }) {
-  const [currentResults, setCurrentResults] = useState([]);
+function CurrentResultsAllocation({
+  proposalContent,
+  proposalInfo,
+}: {
+  proposalContent: Proposal;
+  proposalInfo: ProposalInfo;
+}) {
+  const [currentResults, setCurrentResults] = useState<ResultsLoss[]>([]);
 
   useEffect(() => {
     function getCurrentResults() {
-      const temp = [];
+      const temp: ResultsLoss[] = [];
       const totalStaked = proposalInfo.stakedValuePerOption.reduce(
         (a, b) => a + b / 10 ** 18,
         0
@@ -505,7 +564,7 @@ function CurrentResultsAllocation({ proposalContent, proposalInfo }) {
         temp.push({
           choice: proposalContent.options[vote.option].label,
           percentage: Math.round(vote.amount / 10 ** 14 / totalStaked) / 100,
-          label: vote.amount / 10 ** 18,
+          label: String(vote.amount / 10 ** 18),
         });
       });
       return temp;

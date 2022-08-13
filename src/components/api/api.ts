@@ -1,9 +1,12 @@
 import { address, abi } from "./contract.json";
 import ipfsClient from "ipfs-http-client";
 import Web3 from "web3";
+import { ProposalInfo } from "components/Vote/VoteDetail";
+
+const ipfsURL = "abcdao.infura-ipfs.io";
 
 const ipfs = ipfsClient.create({
-  host: "ipfs.infura.io",
+  host: ipfsURL,
   port: 5001,
   protocol: "https",
 });
@@ -16,9 +19,7 @@ export async function uploadProposal(text: string) {
 export async function retrieveProposal(
   proposalHash: string
 ): Promise<Proposal> {
-  return fetch("https://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
-    x.json()
-  );
+  return fetch("https://" + ipfsURL + "/" + proposalHash).then((x) => x.json());
 }
 
 export function getContract(web3: Web3) {
@@ -30,10 +31,14 @@ export async function getProposalHashes(web3: Web3): Promise<string[]> {
   return contract.methods.getProposalHashes().call();
 }
 
-export async function getProposalInfo(web3: Web3, ipfsHash: string) {
+export async function getProposalInfo(
+  web3: Web3,
+  ipfsHash: string
+): Promise<ProposalInfo> {
   const contract = await getContract(web3);
   return contract.methods.getProposalInfo(ipfsHash).call();
 }
+
 export async function getAllProposals(web3: Web3) {
   const contract = await getContract(web3);
   return contract.methods.getAllProposals().call();
@@ -71,8 +76,11 @@ export interface Proposal {
   min_stake: number;
   userId: string;
   create_date: number;
+  type: string;
+  options: { id: number; label: string }[];
   end_date: number;
   isLossVoting: boolean;
+  isActive: boolean;
   isAllocationProposal: boolean;
 }
 
