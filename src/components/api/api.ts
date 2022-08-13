@@ -1,5 +1,6 @@
-const { address, abi } = require("./contract.json");
-const ipfsClient = require("ipfs-http-client");
+import { address, abi } from "./contract.json";
+import ipfsClient from "ipfs-http-client";
+import Web3 from "web3";
 
 const ipfs = ipfsClient.create({
   host: "ipfs.infura.io",
@@ -7,43 +8,51 @@ const ipfs = ipfsClient.create({
   protocol: "https",
 });
 
-export async function uploadProposal(text) {
-  const added = await ipfs.add(text, (err, ipfsHash) => {
-    console.log(err, ipfsHash);
-  });
+export async function uploadProposal(text: string) {
+  const added = await ipfs.add(text);
   return added.path;
 }
 
-export async function retrieveProposal(proposalHash) {
+export async function retrieveProposal(
+  proposalHash: string
+): Promise<Proposal> {
   return fetch("https://ipfs.infura.io/ipfs/" + proposalHash).then((x) =>
     x.json()
   );
 }
 
-export function getContract(web3) {
-  return new web3.eth.Contract(abi, address);
+export function getContract(web3: Web3) {
+  return new web3.eth.Contract(abi as any, address);
 }
 
-export async function getProposalHashes(web3) {
+export async function getProposalHashes(web3: Web3): Promise<string[]> {
   const contract = await getContract(web3);
   return contract.methods.getProposalHashes().call();
 }
 
-export async function getProposalInfo(web3, ipfsHash) {
+export async function getProposalInfo(web3: Web3, ipfsHash: string) {
   const contract = await getContract(web3);
   return contract.methods.getProposalInfo(ipfsHash).call();
 }
-export async function getAllProposals(web3) {
+export async function getAllProposals(web3: Web3) {
   const contract = await getContract(web3);
   return contract.methods.getAllProposals().call();
 }
 
-export async function getVotesForOption(web3, ipfsHash, optionIndex) {
+export async function getVotesForOption(
+  web3: Web3,
+  ipfsHash: string,
+  optionIndex: number
+) {
   const contract = await getContract(web3);
   return contract.methods.getVotesForOption(ipfsHash, optionIndex).call();
 }
 
-export async function initialiseUser(web3, account, userAccount) {
+export async function initialiseUser(
+  web3: Web3,
+  account: string,
+  userAccount: string
+) {
   const contract = await getContract(web3);
   try {
     return await contract.methods
@@ -54,8 +63,25 @@ export async function initialiseUser(web3, account, userAccount) {
   }
 }
 
+export interface Proposal {
+  ipfs: string;
+  title: string;
+  content: string;
+  numOfOptions: number;
+  min_stake: number;
+  userId: string;
+  create_date: number;
+  end_date: number;
+  isLossVoting: boolean;
+  isAllocationProposal: boolean;
+}
+
 //can change anything except .create proposal
-export async function createProposal(web3, account, values) {
+export async function createProposal(
+  web3: Web3,
+  account: string | null,
+  values: Proposal
+) {
   const contract = await getContract(web3);
   const ipfsHash = await uploadProposal(JSON.stringify(values));
   try {
@@ -75,7 +101,12 @@ export async function createProposal(web3, account, values) {
   }
 }
 
-export async function setProposalStatus(web3, account, ipfsHash, isActive) {
+export async function setProposalStatus(
+  web3: Web3,
+  account: string,
+  ipfsHash: string,
+  isActive: boolean
+) {
   const contract = await getContract(web3);
   try {
     return await contract.methods
@@ -87,17 +118,17 @@ export async function setProposalStatus(web3, account, ipfsHash, isActive) {
 }
 
 export async function sendVote(
-  web3,
-  account,
-  ipfsHash,
-  optionIndex,
-  stakeValue
+  web3: Web3,
+  account: string | null,
+  ipfsHash: string,
+  optionIndex: number,
+  stakeValue: number
 ) {
   const contract = await getContract(web3);
-  const amt = stakeValue * 1000000000000000000;
+  const amt = String(stakeValue * 1000000000000000000);
   try {
     return await contract.methods
-      .vote(ipfsHash, optionIndex, String(amt))
+      .vote(ipfsHash, optionIndex, amt)
       .send({ from: account });
   } catch (err) {
     console.log("Unsuccessful voting on proposal");

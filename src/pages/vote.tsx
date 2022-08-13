@@ -12,7 +12,7 @@ export default function Vote() {
   let { path, url } = useRouteMatch();
   const [page, setPage] = useState("Proposals");
 
-  function PanelItem({ label }) {
+  function PanelItem({ label }: { label: string }) {
     return (
       <div
         className={
@@ -93,6 +93,7 @@ export default function Vote() {
     if (page === "About") {
       return <AboutTab />;
     }
+    return null;
   }
 
   return (

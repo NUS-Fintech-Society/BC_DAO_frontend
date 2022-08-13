@@ -1,12 +1,20 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { Field, FieldArray, Form, Formik, useFormikContext } from "formik";
+import {
+  Field,
+  FieldArray,
+  FieldProps,
+  Form,
+  Formik,
+  useFormikContext,
+} from "formik";
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import { createProposal } from "../api/Api";
+import { createProposal } from "../api/api";
 import { getCurrentDateTime, showCurrentDate } from "./voteUtils";
 import DatePicker from "react-datepicker";
+import Web3 from "web3";
 
 const formTypes = [
   { label: "Loss Voting", value: "loss" },
@@ -32,7 +40,7 @@ const initialValues = {
   end_date: getCurrentDateTime(),
 };
 
-async function submitProposal(web3, account, values) {
+async function submitProposal(web3: Web3, account: string | null, values: any) {
   const finalValues = {
     ...values,
     create_date: getCurrentDateTime(),
@@ -42,8 +50,7 @@ async function submitProposal(web3, account, values) {
     userId: account,
   };
 
-  const create = await createProposal(web3, account, finalValues);
-  return create;
+  return createProposal(web3, account, finalValues);
 }
 
 const proposalSchema = Yup.object().shape({
@@ -87,8 +94,8 @@ export default function NewProposal() {
           initialValues={initialValues}
           validationSchema={proposalSchema}
           validateOnMount={true}
-          onSubmit={(values, actions, { resetForm }) => {
-            // console.log(JSON.stringify(values));
+          onSubmit={(values, { resetForm }) => {
+            console.log(JSON.stringify(values));
             // submitProposal(web3, accounts[0], values);
             // actions.setSubmitting(false);
             resetForm();
@@ -188,7 +195,11 @@ export default function NewProposal() {
                           : `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all`
                       }
                       onClick={() => {
-                        submitProposal(web3, accounts[0], values);
+                        submitProposal(
+                          web3,
+                          accounts ? accounts[0] : "",
+                          values
+                        );
                         setSubmitting(false);
                       }}
                     >
@@ -205,60 +216,84 @@ export default function NewProposal() {
   );
 }
 
-const CustomTextInput = ({ field, ...props }) => (
+const CustomTextInput = ({
+  field,
+  ...props
+}: FieldProps<typeof initialValues>) => (
   <div className="flex flex-col my-2 space-y-1 w-full">
     <div className="flex flex-row space-x-2 items-end">
-      <div className="text-gray-500 font-semibold text-2xl">{props.label}</div>
+      <div className="text-gray-500 font-semibold text-2xl">
+        {/* {props.label} */}
+        FIXME: props.label
+      </div>
       <div className="class">
-        {props.errors.title && props.touched.title ? (
+        {props.form.errors.title && props.form.touched.title ? (
           <div className="text-red-500 font-thin text-sm">required</div>
         ) : null}
       </div>
     </div>
     <input
       type="text"
-      {...field}
+      {...(field as any)}
       {...props}
       className="border border-gray-200 rounded-lg p-2 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
     />
   </div>
 );
 
-const CustomLongTextInput = ({ field, ...props }) => (
+const CustomLongTextInput = ({
+  field,
+  ...props
+}: FieldProps<typeof initialValues>) => (
   <div className="flex flex-col my-2 space-y-1">
     <div className="flex flex-row space-x-2 items-end">
-      <div className="text-gray-500 font-semibold text-2xl">{props.label}</div>
+      <div className="text-gray-500 font-semibold text-2xl">
+        {/* {props.label} */}
+        FIXME: props.label
+      </div>
       <div className="class">
-        {props.errors.content && props.touched.content ? (
+        {props.form.errors.content && props.form.touched.content ? (
           <div className="text-red-500 font-thin text-sm">required</div>
         ) : null}
       </div>
     </div>
     <textarea
-      type="text"
       rows={6}
-      {...field}
+      {...(field as any)}
       {...props}
       className="border border-gray-200 rounded-lg p-2 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
     />
   </div>
 );
 
-const CustomOptionInput = ({ field, ...props }) => (
+const CustomOptionInput = ({
+  field,
+  ...props
+}: FieldProps<typeof initialValues>) => (
   <div className="flex flex-col w-full">
     <input
       type="text"
-      {...field}
+      {...(field as any)}
       {...props}
       className="p-2 shadow-sm text-base focus:outline-none focus:border-transparent font-bold text-center"
     />
   </div>
 );
 
-function CustomStakeInput({ field, ...props }) {
+interface Stake {
+  value: number;
+  label: string;
+}
+
+function CustomStakeInput({
+  field,
+  ...props
+}: FieldProps<typeof initialValues["min_stake"]>) {
   let [isOpen, setIsOpen] = useState(false);
   let [stakeLabel, setStakeLabel] = useState(getLabel());
-  let buttonRef = useRef(minStakeValues.map(() => React.createRef()));
+  let buttonRefs = useRef(
+    minStakeValues.map(() => React.createRef<HTMLButtonElement>())
+  );
 
   function closeModal() {
     setIsOpen(false);
@@ -268,9 +303,9 @@ function CustomStakeInput({ field, ...props }) {
     setIsOpen(true);
   }
 
-  function setStake(stake) {
+  function setStake(stake: { value: number; label: string }) {
     initialMinStakeVal = stake.value;
-    field.min_stake = stake.value;
+    field.value = stake.value;
     setStakeLabel(stake.label);
     closeModal();
   }
@@ -278,7 +313,10 @@ function CustomStakeInput({ field, ...props }) {
   // Get the label corresponding to the value in minStakeValues
   function getLabel() {
     try {
-      return minStakeValues.find((stake) => stake.value === field.value).label;
+      const filtered = minStakeValues.find(
+        (stake) => stake.value === field.value
+      );
+      return filtered && filtered.value;
     } catch (error) {
       return "Select Minimum Stake";
     }
@@ -299,12 +337,17 @@ function CustomStakeInput({ field, ...props }) {
           {stakeLabel}
         </button>
       </div>
-      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+      <Transition
+        appear
+        show={isOpen}
+        as={Fragment}
+        //  autoFocus={isOpen}
+      >
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={closeModal}
-          initialFocus={buttonRef.current[getPosition()]}
+          initialFocus={buttonRefs.current[getPosition()]}
         >
           <div className="min-h-screen px-4 text-center">
             {/* Allow for clicking outside to close modal*/}
@@ -347,11 +390,11 @@ function CustomStakeInput({ field, ...props }) {
                   {minStakeValues.map((stake, index) => (
                     <button
                       key={stake.value}
-                      value={stake.value}
                       type="button"
-                      {...field}
+                      value={stake.value}
+                      {...(field as any)}
                       {...props}
-                      ref={buttonRef.current[index]}
+                      ref={buttonRefs.current[index]}
                       className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
                       onClick={() => setStake(stake)}
                     >
@@ -368,9 +411,14 @@ function CustomStakeInput({ field, ...props }) {
   );
 }
 
-function CustomVoteInput({ field, ...props }) {
+function CustomVoteInput({
+  field,
+  ...props
+}: FieldProps<typeof initialValues["type"]>) {
   let [isOpen, setIsOpen] = useState(false);
-  let buttonRef = useRef(formTypes.map(() => React.createRef()));
+  let buttonRefs = useRef(
+    formTypes.map(() => React.createRef<HTMLButtonElement>())
+  );
 
   function closeModal() {
     setIsOpen(false);
@@ -380,7 +428,7 @@ function CustomVoteInput({ field, ...props }) {
     setIsOpen(true);
   }
 
-  function setType(type) {
+  function setType(type: { value: string }) {
     field.value = type.value;
     initialType = type.value;
     closeModal();
@@ -389,7 +437,10 @@ function CustomVoteInput({ field, ...props }) {
   // Get the label corresponding to the value in formTypes
   function getLabel() {
     try {
-      return formTypes.find((type) => type.value === field.value).label;
+      const filteredTypes = formTypes.find(
+        (type) => type.value === field.value
+      );
+      return filteredTypes && filteredTypes.label;
     } catch (error) {
       return "Select Type";
     }
@@ -410,12 +461,17 @@ function CustomVoteInput({ field, ...props }) {
           {getLabel()}
         </button>
       </div>
-      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+      <Transition
+        appear
+        show={isOpen}
+        as={Fragment}
+        // autoFocus={isOpen}
+      >
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={closeModal}
-          initialFocus={buttonRef.current[getPosition()]}
+          initialFocus={buttonRefs.current[getPosition()]}
         >
           <div className="min-h-screen px-4 text-center">
             {/* Allow for clicking outside to close modal*/}
@@ -458,11 +514,11 @@ function CustomVoteInput({ field, ...props }) {
                   {formTypes.map((type, index) => (
                     <button
                       key={type.value}
-                      value={type.value}
                       type="button"
-                      {...field}
+                      value={type.value}
+                      {...(field as any)}
                       {...props}
-                      ref={buttonRef.current[index]}
+                      ref={buttonRefs.current[index]}
                       className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
                       onClick={() => setType(type)}
                     >
@@ -479,7 +535,10 @@ function CustomVoteInput({ field, ...props }) {
   );
 }
 
-function CustomDateInput({ field, ...props }) {
+function CustomDateInput({
+  field,
+  ...props
+}: FieldProps<typeof initialValues["end_date"]>) {
   const { setFieldValue } = useFormikContext();
   let [isOpen, setIsOpen] = useState(false);
 
@@ -501,7 +560,12 @@ function CustomDateInput({ field, ...props }) {
           End Date: {showCurrentDate(field.value)}
         </button>
       </div>
-      <Transition appear show={isOpen} as={Fragment} autoFocus={isOpen}>
+      <Transition
+        appear
+        show={isOpen}
+        as={Fragment}
+        // autoFocus={isOpen}
+      >
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
@@ -548,9 +612,10 @@ function CustomDateInput({ field, ...props }) {
                   <DatePicker
                     {...field}
                     {...props}
+                    value={String(field.value)}
                     selected={(field.value && new Date(field.value)) || null}
                     onChange={(val) => {
-                      setFieldValue(field.name, val.getTime());
+                      if (val) setFieldValue(field.name, val.getTime());
                     }}
                     inline
                     className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"

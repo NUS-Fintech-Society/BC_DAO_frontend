@@ -1,6 +1,6 @@
 import React from "react";
 import NavBar from "../components/Layout/NavBar";
-import Header from "../components/LandingPage/Header"
+import Header from "../components/LandingPage/Header";
 import BlockChainDescription from "../components/LandingPage/BlockChainDescription";
 import CoinInfo from "../components/LandingPage/CoinInfo";
 

@@ -11,11 +11,11 @@ const navigation = [
   { name: "Vote", href: `${process.env.PUBLIC_URL}#/vote` },
 ];
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NabBar() {
+export default function NavBar() {
   //Web 3 Init and info
   const web3Context = useWeb3(
     `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
@@ -53,7 +53,7 @@ export default function NabBar() {
         >
           <span> Logged in as </span>
           <span className="font-semibold text-gray-500">
-            {getShortAccountHash(accounts)}
+            {getShortAccountHash(accounts[0])}
           </span>
           <ToastContainer
             position="bottom-center"

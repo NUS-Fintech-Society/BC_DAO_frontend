@@ -1,4 +1,4 @@
-export const getUser = (userId) => {
+export const getUser = (userId: number) => {
   return "John Doe";
 };
 
@@ -6,15 +6,15 @@ export const getCurrentDateTime = () => {
   return Date.now();
 };
 
-export const showCurrentDateTime = (date) => {
+export const showCurrentDateTime = (date: number) => {
   return new Date(date).toLocaleString();
 };
 
-export const showCurrentDate = (date) => {
+export const showCurrentDate = (date: number) => {
   return new Date(date).toLocaleString("en-US", { dateStyle: "short" });
 };
 
-export const getReadableDate = (date) => {
+export const getReadableDate = (date: number) => {
   return new Date(date).toLocaleString("en-US", {
     day: "numeric",
     month: "short",
@@ -22,7 +22,7 @@ export const getReadableDate = (date) => {
   });
 };
 
-export const timeSince = (date) => {
+export const timeSince = (date: number) => {
   const currDate = getCurrentDateTime();
   const seconds = Math.floor((currDate - date) / 1000);
 

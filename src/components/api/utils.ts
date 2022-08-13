@@ -1,4 +1,4 @@
-export function getShortAccountHash(account) {
+export function getShortAccountHash(account: string) {
   const accountHash = String(account);
   if (accountHash) {
     return (
@@ -11,10 +11,13 @@ export function getShortAccountHash(account) {
   }
 }
 
-export function getAccountHash(accounts, networkId) {
+export function getAccountHash(
+  accounts: string[] | null,
+  networkId: number | null
+) {
   if (accounts && accounts.length && networkId === 3) {
     return accounts[0];
   } else {
-    return false;
+    return "";
   }
 }

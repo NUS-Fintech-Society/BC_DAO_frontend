@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function IndividualLineFormat({ header, type = "default" }) {
+export default function IndividualLineFormat({
+  header,
+  type = "default",
+}: {
+  header: String;
+  type?: "default" | "first" | "last";
+}) {
   if (type === "first") {
     return (
       <div className="p-4 px-6 text-lg font-semibold border-b">{header}</div>
@@ -14,4 +20,5 @@ export default function IndividualLineFormat({ header, type = "default" }) {
   if (type === "last") {
     return <div className="p-4 px-6 text-lg font-semibold">{header}</div>;
   }
+  return null;
 }

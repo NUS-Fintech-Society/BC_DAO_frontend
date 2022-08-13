@@ -3,13 +3,18 @@ import { useWeb3 } from "@openzeppelin/network/lib/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getProposalInfo, retrieveProposal, sendVote } from "../api/Api";
+import {
+  getProposalInfo,
+  Proposal,
+  retrieveProposal,
+  sendVote,
+} from "../api/api";
 import { getShortAccountHash } from "../api/utils";
 import { getReadableDate } from "./voteUtils";
 
 export default function VoteDetail() {
   //Address routing
-  let { params } = useRouteMatch();
+  let { params } = useRouteMatch<{ id: string }>();
   const ipfsHash = params.id;
 
   //Web3 API Itialization
@@ -19,7 +24,7 @@ export default function VoteDetail() {
   const { lib: web3, accounts } = web3Context;
 
   //Getting proposal content
-  const [proposalContent, setProposalContent] = useState(null);
+  const [proposalContent, setProposalContent] = useState<Proposal | null>(null);
   const [proposalInfo, setProposalInfo] = useState(null);
 
   useEffect(() => {
@@ -73,39 +78,37 @@ export default function VoteDetail() {
       toastId: "confirmationMessage",
     });
 
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<number | null>(null);
 
   async function submitVote() {
-    const vote = await sendVote(
-      web3,
-      accounts[0],
-      ipfsHash,
-      selected,
-      Number(amount)
-    );
-    return vote;
+    if (selected !== null && amount !== null) {
+      const vote = await sendVote(
+        web3,
+        accounts && accounts[0],
+        ipfsHash,
+        selected,
+        +amount
+      );
+      return vote;
+    }
   }
 
   function isSelected() {
-    if (selected !== undefined && selected !== null) {
-      return true;
-    }
-    return false;
+    return selected !== undefined && selected !== null;
   }
 
   function isLoggedIn() {
-    if (accounts.length > 0) {
-      return true;
-    }
-    return false;
+    return accounts && accounts.length > 0;
   }
 
   function getType() {
-    if (proposalContent.type === "loss") {
-      return "Loss Voting";
-    }
-    if (proposalContent.type === "allocation") {
-      return "Allocation Proposal";
+    if (proposalContent) {
+      if (proposalContent.type === "loss") {
+        return "Loss Voting";
+      }
+      if (proposalContent.type === "allocation") {
+        return "Allocation Proposal";
+      }
     }
     return "unknown";
   }
@@ -155,7 +158,7 @@ export default function VoteDetail() {
                   <button
                     key={option.id}
                     type="submit"
-                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all 
+                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all
                     ${
                       index === selected
                         ? "ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50"
@@ -180,7 +183,7 @@ export default function VoteDetail() {
                   appear
                   show={isOpen}
                   as={Fragment}
-                  autoFocus={isOpen}
+                  // autoFocus={isOpen}
                 >
                   <Dialog
                     as="div"
@@ -317,7 +320,7 @@ export default function VoteDetail() {
   );
 }
 
-const IsActiveTag = ({ content }) => {
+const IsActiveTag = ({ content }: { content: string; isActive: boolean }) => {
   return content.isActive ? (
     <div className="flex bg-green-500 text-white px-4 p-1 rounded-full text-sm font-medium w-min text-center">
       Active
@@ -329,7 +332,15 @@ const IsActiveTag = ({ content }) => {
   );
 };
 
-const VoteItem = ({ address, choice, amount }) => {
+const VoteItem = ({
+  address,
+  choice,
+  amount,
+}: {
+  address: string;
+  choice: string;
+  amount: number;
+}) => {
   return (
     <div className="grid grid-cols-3 text-base w-full text-center font-semibold text-gray-800 border-b-2 border-indigo-100 py-4 px-6">
       <div className="mr-auto">{address}</div>
@@ -339,7 +350,13 @@ const VoteItem = ({ address, choice, amount }) => {
   );
 };
 
-const InformationItem = ({ title, value }) => {
+const InformationItem = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: number;
+}) => {
   return (
     <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">
       <div className="class">{title}</div>
@@ -348,7 +365,15 @@ const InformationItem = ({ title, value }) => {
   );
 };
 
-const ResultItem = ({ choice, percentage, label }) => {
+const ResultItem = ({
+  choice,
+  percentage,
+  label,
+}: {
+  choice: string;
+  percentage: number;
+  label: string;
+}) => {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between items-center text-base font-semibold text-gray-400">

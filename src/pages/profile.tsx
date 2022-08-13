@@ -25,7 +25,7 @@ export default function Profile() {
   const [page, setPage] = useState("Profile");
   const accountHash = getAccountHash(accounts, networkId);
 
-  function PanelItem({ label }) {
+  function PanelItem({ label }: { label: string }) {
     return (
       <div
         className={

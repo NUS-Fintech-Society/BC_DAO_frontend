@@ -1,9 +1,15 @@
+import { Proposal } from "components/api/api";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { getShortAccountHash } from "../api/utils";
 import { getCurrentDateTime, getReadableDate } from "./voteUtils";
 
-export default function VoteListItem({ content, skeleton }) {
+interface VoteListItemProps {
+  content?: Proposal;
+  skeleton?: boolean;
+}
+
+export default function VoteListItem({ content, skeleton }: VoteListItemProps) {
   let { url } = useRouteMatch();
 
   if (skeleton) {
@@ -26,6 +32,9 @@ export default function VoteListItem({ content, skeleton }) {
         </div>
       </div>
     );
+  }
+  if (!content) {
+    return null;
   }
 
   return (
