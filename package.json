@@ -30,7 +30,6 @@
     "build": "next build",
     "start": "next start",
     "format": "npx prettier --write pages components \"**/*.{ts,tsx,.css}\"",
-    "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "prepare": "husky install"
   },
