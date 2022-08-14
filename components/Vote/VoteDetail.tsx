@@ -1,18 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { useWeb3 } from '@openzeppelin/network/lib/react';
-import { Proposal, ProposalInfo } from 'components/api/types';
-import React, { Fragment, useEffect, useState } from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import Link from 'next/link';
+import { Fragment, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getProposalInfo, retrieveProposal, sendVote } from '../api/api';
+import { Proposal, ProposalInfo } from '../api/types';
 import { getShortAccountHash } from '../api/utils';
 import { getReadableDate } from './voteUtils';
 
-export default function VoteDetail() {
-  //Address routing
-  let { params } = useRouteMatch<{ id: string }>();
-  const ipfsHash = params.id;
-
+export default function VoteDetail({ ipfsHash }: { ipfsHash: string }) {
   //Web3 API Itialization
   const web3Context = useWeb3(
     `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
@@ -25,6 +21,7 @@ export default function VoteDetail() {
 
   useEffect(() => {
     async function getProposal() {
+      console.log(ipfsHash);
       await retrieveProposal(ipfsHash).then((proposal) => {
         setProposalContent(proposal);
       });
@@ -77,7 +74,7 @@ export default function VoteDetail() {
   const [selected, setSelected] = useState<number | null>(null);
 
   async function submitVote() {
-    if (selected !== null && amount !== null) {
+    if (selected !== null && amount !== null && typeof ipfsHash === 'string') {
       const vote = await sendVote(
         web3,
         accounts && accounts[0],
@@ -109,31 +106,32 @@ export default function VoteDetail() {
     return 'unknown';
   }
 
+  if (!ipfsHash) return null;
+
   return (
     <>
       {proposalContent ? (
         <div className="flex flex-col space-y-6 max-w-7xl p-2 px-4 xl:flex-row xl:justify-between xl:space-x-6 mb-10 cursor-default">
           <div className="flex flex-col space-y-8 w-full">
             <div className="space-y-4">
-              <Link
-                to="/vote"
-                className="flex flex-row text-gray-400 items-center content-center cursor-pointer w-min"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16l-4-4m0 0l4-4m-4 4h18"
-                  />
-                </svg>
-                <div className="">back</div>
+              <Link href="/vote">
+                <div className="flex flex-row text-gray-400 items-center content-center cursor-pointer w-min">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                    />
+                  </svg>
+                  <div className="">back</div>
+                </div>
               </Link>
               <div className="text-gray-700 font-bold text-3xl">
                 {proposalContent.title}
@@ -154,10 +152,10 @@ export default function VoteDetail() {
                   <button
                     key={option.id}
                     type="submit"
-                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all
+                    className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all
                     ${
                       index === selected
-                        ? 'ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50'
+                        ? 'ring-2 border-transparent ring-blue-500 outline-none border bg-indigo-50'
                         : null
                     }`}
                     onClick={() => setSelected(index)}
@@ -168,7 +166,7 @@ export default function VoteDetail() {
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
                     isSelected() && isLoggedIn()
-                      ? 'focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer'
+                      ? 'focus:outline-none hover:border-1 focus:border-1 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer'
                       : 'cursor-not-allowed'
                   }`}
                   onClick={() => {

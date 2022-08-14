@@ -17,11 +17,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "incremental": true
   },
   "include": [
     "src"
+, "pages", "components"  ],
+  "exclude": [
+    "node_modules"
   ]
 }

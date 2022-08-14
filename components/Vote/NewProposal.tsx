@@ -9,13 +9,13 @@ import {
   useFormikContext,
 } from 'formik';
 import React, { Fragment, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { createProposal } from '../api/api';
 import { getCurrentDateTime, showCurrentDate } from './voteUtils';
 import DatePicker from 'react-datepicker';
 import Web3 from 'web3';
-import { Proposal } from 'components/api/types';
+import Link from 'next/link';
+import { Proposal } from '../api/types';
 
 const formTypes = [
   { label: 'Loss Voting', value: 'loss' },
@@ -89,7 +89,7 @@ export default function NewProposal() {
       <div className="flex flex-col max-w-7xl mx-auto p-2">
         <div className="flex flex-row items-center justify-between px-4 ">
           <div className="text-4xl text-gray-700 my-4">New Proposal</div>
-          <Link to={`/vote`}>
+          <Link href={`/vote`}>
             <div className="bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
               Back to vote
             </div>
@@ -223,13 +223,15 @@ export default function NewProposal() {
   );
 }
 
-const CustomTextInput = ({ field, form, ...props }: FieldProps) => (
+const CustomTextInput = ({
+  field,
+  form,
+  label,
+  ...props
+}: FieldProps & { label: string }) => (
   <div className="flex flex-col my-2 space-y-1 w-full">
     <div className="flex flex-row space-x-2 items-end">
-      <div className="text-gray-500 font-semibold text-2xl">
-        {/* {props.label} */}
-        FIXME: props.label
-      </div>
+      <div className="text-gray-500 font-semibold text-2xl">{label}</div>
       <div className="class">
         {form.errors.title && form.touched.title ? (
           <div className="text-red-500 font-thin text-sm">required</div>
@@ -245,13 +247,15 @@ const CustomTextInput = ({ field, form, ...props }: FieldProps) => (
   </div>
 );
 
-const CustomLongTextInput = ({ field, form, ...props }: FieldProps) => (
+const CustomLongTextInput = ({
+  field,
+  form,
+  label,
+  ...props
+}: FieldProps & { label: string }) => (
   <div className="flex flex-col my-2 space-y-1">
     <div className="flex flex-row space-x-2 items-end">
-      <div className="text-gray-500 font-semibold text-2xl">
-        {/* {props.label} */}
-        FIXME: props.label
-      </div>
+      <div className="text-gray-500 font-semibold text-2xl">{label}</div>
       <div className="class">
         {form.errors.content && form.touched.content ? (
           <div className="text-red-500 font-thin text-sm">required</div>

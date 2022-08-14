@@ -114,7 +114,6 @@ export default function Profile() {
 
   return (
     <div className="w-full h-full">
-      <NavBar />
       <div className="flex flex-col max-w-7xl mx-auto p-2 mb-10">
         <div className="flex flex-col px-4">
           <div className="text-4xl text-gray-700 my-4">User Profile</div>

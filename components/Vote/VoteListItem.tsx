@@ -1,6 +1,7 @@
-import { Proposal } from 'components/api/types';
-import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+import { Proposal } from '../api/types';
 import { getShortAccountHash } from '../api/utils';
 import { getCurrentDateTime, getReadableDate } from './voteUtils';
 
@@ -10,7 +11,7 @@ interface VoteListItemProps {
 }
 
 export default function VoteListItem({ content, skeleton }: VoteListItemProps) {
-  let { url } = useRouteMatch();
+  const router = useRouter();
 
   if (skeleton) {
     return (
@@ -39,7 +40,7 @@ export default function VoteListItem({ content, skeleton }: VoteListItemProps) {
 
   return (
     <div className="flex flex-col border border-gray-200 shadow-sm rounded-md w-full hover:bg-indigo-100">
-      <Link to={`${url}/${content.ipfs}`}>
+      <Link href={`${router.route}/${content.ipfs}`}>
         <div className="flex flex-col py-4 px-4 text-gray-400 hover:text-gray-800 cursor-pointer">
           <div className="flex flex-row justify-between mb-1">
             <div className="text-base font-light">

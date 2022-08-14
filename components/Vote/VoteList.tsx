@@ -1,5 +1,5 @@
 import { useWeb3 } from '@openzeppelin/network/lib/react';
-import { Proposal } from 'components/api/types';
+import { Proposal } from '../components/api/types';
 import React, { useEffect, useState } from 'react';
 import { getProposalHashes, retrieveProposal } from '../api/api';
 import VoteListItem from './VoteListItem';

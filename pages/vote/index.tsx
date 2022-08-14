@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Link, useRouteMatch, Switch, Route } from 'react-router-dom';
-import NavBar from '../components/Layout/NavBar';
-import VoteList from '../components/Vote/VoteList';
-import VoteDetail from '../components/Vote/VoteDetail';
-import NewProposal from '../components/Vote/NewProposal';
-import HeaderTextFormat from '../components/TextFormats/HeaderTextFormat';
-import IndividualLineFormat from '../components/TextFormats/IndividualLineFormat';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import HeaderTextFormat from '../../components/TextFormats/HeaderTextFormat';
+import IndividualLineFormat from '../../components/TextFormats/IndividualLineFormat';
+import VoteList from '../../components/Vote/VoteList';
 
 export default function Vote() {
-  let { path, url } = useRouteMatch();
   const [page, setPage] = useState('Proposals');
+  const router = useRouter();
 
   function PanelItem({ label }: { label: string }) {
     return (
@@ -42,7 +40,7 @@ export default function Vote() {
         <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">
           <PanelItem label="Proposals" />
           <div className="cursor-pointer hover:text-gray-400">
-            <Link to={`${url}/new-proposal`}>New Proposal</Link>
+            <Link href={`${router.pathname}/new-proposal`}>New Proposal</Link>
           </div>
           <PanelItem label="About" />
         </div>
@@ -98,39 +96,28 @@ export default function Vote() {
 
   return (
     <div className="w-full h-full">
-      <NavBar />
       <div className="flex flex-col max-w-7xl mx-auto p-2 mb-10">
-        <Switch>
-          <Route exact path={path}>
-            <div className="w-full">
-              <div className="flex flex-row items-center justify-between px-4 ">
-                <div className="text-4xl text-gray-700 my-4">Proposals</div>
-                <div className="flex lg:hidden">
-                  <Link to={`${url}/new-proposal`}>
-                    <div className="bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-indigo-100">
-                      New Proposal
-                    </div>
-                  </Link>
+        <div className="w-full">
+          <div className="flex flex-row items-center justify-between px-4 ">
+            <div className="text-4xl text-gray-700 my-4">Proposals</div>
+            <div className="flex lg:hidden">
+              <Link href={`${router.pathname}/new-proposal`}>
+                <div className="bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-indigo-100">
+                  New Proposal
                 </div>
-              </div>
-              <div className="hidden lg:flex flex-row space-x-6 w-full">
-                <div className="w-1/3">
-                  <PanelLeft />
-                </div>
-                <PanelRight />
-              </div>
-              <div className="flex flex-col w-full lg:hidden space-y-4">
-                <VoteList />
-              </div>
+              </Link>
             </div>
-          </Route>
-          <Route path={`${path}/new-proposal`}>
-            <NewProposal />
-          </Route>
-          <Route path={`${path}/:id`}>
-            <VoteDetail />
-          </Route>
-        </Switch>
+          </div>
+          <div className="hidden lg:flex flex-row space-x-6 w-full">
+            <div className="w-1/3">
+              <PanelLeft />
+            </div>
+            <PanelRight />
+          </div>
+          <div className="flex flex-col w-full lg:hidden space-y-4">
+            <VoteList />
+          </div>
+        </div>
       </div>
     </div>
   );

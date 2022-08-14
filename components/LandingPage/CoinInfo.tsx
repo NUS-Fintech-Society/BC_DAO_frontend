@@ -1,10 +1,8 @@
-import React from 'react';
-
-export default function BlockChainDescription() {
+export default function CoinInfo() {
   return (
     <div className="p-8">
-      <header className="text-center text-xl p-4 font-semibold">
-        What is Blockchain?
+      <header className="text-center text-2xl p-4 font-semibold">
+        Information about our DAO token
       </header>
       <div className="text-center m-auto max-w-prose">
         Lorem Ipsum is simply dummy text of the printing and typesetting
