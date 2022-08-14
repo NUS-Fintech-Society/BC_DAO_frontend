@@ -11,10 +11,11 @@ import {
 import React, { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import { createProposal, Proposal } from "../api/api";
+import { createProposal } from "../api/api";
 import { getCurrentDateTime, showCurrentDate } from "./voteUtils";
 import DatePicker from "react-datepicker";
 import Web3 from "web3";
+import { Proposal } from "components/api/types";
 
 const formTypes = [
   { label: "Loss Voting", value: "loss" },

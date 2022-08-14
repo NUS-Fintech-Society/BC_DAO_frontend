@@ -1,35 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useWeb3 } from "@openzeppelin/network/lib/react";
+import { Proposal, ProposalInfo } from "components/api/types";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  getProposalInfo,
-  Proposal,
-  retrieveProposal,
-  sendVote,
-} from "../api/api";
+import { getProposalInfo, retrieveProposal, sendVote } from "../api/api";
 import { getShortAccountHash } from "../api/utils";
 import { getReadableDate } from "./voteUtils";
-
-export interface VoteInfo {
-  proposalHash: string;
-  voter: string;
-  option: number;
-  amount: number;
-}
-
-export interface ProposalInfo {
-  ipfsHash: string;
-  numOfOptions: number;
-  minimumStakeValue: number;
-  stakedValuePerOption: number[];
-  votes: VoteInfo[];
-  isActive: boolean;
-  isLossVoting: boolean;
-  isAllocationProposal: boolean;
-  exists: boolean;
-}
 
 export default function VoteDetail() {
   //Address routing

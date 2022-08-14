@@ -1,6 +1,7 @@
 import { useWeb3 } from "@openzeppelin/network/lib/react";
+import { Proposal } from "components/api/types";
 import React, { useEffect, useState } from "react";
-import { getProposalHashes, Proposal, retrieveProposal } from "../api/api";
+import { getProposalHashes, retrieveProposal } from "../api/api";
 import VoteListItem from "./VoteListItem";
 
 export default function VoteList() {
@@ -15,14 +16,13 @@ export default function VoteList() {
   useEffect(() => {
     async function getAllProposals() {
       await getProposalHashes(web3).then((proposalData) => {
-        console.log(proposalData);
         setProposalToShow(proposalData.length);
         proposalData.forEach(async (element) => {
           if (element) {
-            // await retrieveProposal(element).then((data) => {
-            //   const new_data = { ...data, ipfs: element };
-            //   setProposalList((prevState) => [...prevState, new_data]);
-            // });
+            await retrieveProposal(element).then((data) => {
+              const new_data = { ...data, ipfs: element };
+              setProposalList((prevState) => [...prevState, new_data]);
+            });
           }
         });
       });

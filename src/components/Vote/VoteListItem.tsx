@@ -1,4 +1,4 @@
-import { Proposal } from "components/api/api";
+import { Proposal } from "components/api/types";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { getShortAccountHash } from "../api/utils";

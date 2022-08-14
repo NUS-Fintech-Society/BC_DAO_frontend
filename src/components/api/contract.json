@@ -1,6 +1,8 @@
 {
-  "abi": [{
-      "inputs": [{
+  "abi": [
+    {
+      "inputs": [
+        {
           "internalType": "address[]",
           "name": "_admins",
           "type": "address[]"
@@ -16,7 +18,8 @@
     },
     {
       "anonymous": false,
-      "inputs": [{
+      "inputs": [
+        {
           "indexed": false,
           "internalType": "string",
           "name": "ipfsHash",
@@ -46,7 +49,8 @@
     },
     {
       "anonymous": false,
-      "inputs": [{
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "voter",
@@ -76,7 +80,8 @@
     },
     {
       "anonymous": false,
-      "inputs": [{
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "voter",
@@ -105,11 +110,13 @@
       "type": "event"
     },
     {
-      "inputs": [{
-        "internalType": "address",
-        "name": "_admin",
-        "type": "address"
-      }],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
       "name": "addAdmin",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -118,94 +125,102 @@
     {
       "inputs": [],
       "name": "getProposalHashes",
-      "outputs": [{
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }],
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
       "stateMutability": "view",
       "type": "function",
       "constant": true
     },
     {
-      "inputs": [{
-        "internalType": "string",
-        "name": "_ipfsHash",
-        "type": "string"
-      }],
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_ipfsHash",
+          "type": "string"
+        }
+      ],
       "name": "getProposalInfo",
-      "outputs": [{
-        "components": [{
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint8",
-            "name": "numOfOptions",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minimumStakeValue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "stakedValuePerOption",
-            "type": "uint256[]"
-          },
-          {
-            "components": [{
-                "internalType": "string",
-                "name": "proposalHash",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "voter",
-                "type": "address"
-              },
-              {
-                "internalType": "uint8",
-                "name": "option",
-                "type": "uint8"
-              },
-              {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct Voting.VoteInfo[]",
-            "name": "votes",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "isActive",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isLossVoting",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isAllocationProposal",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "exists",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct Voting.ProposalInfo",
-        "name": "",
-        "type": "tuple"
-      }],
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "numOfOptions",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minimumStakeValue",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "stakedValuePerOption",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "proposalHash",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "voter",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "option",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Voting.VoteInfo[]",
+              "name": "votes",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isLossVoting",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isAllocationProposal",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Voting.ProposalInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
       "stateMutability": "view",
       "type": "function",
       "constant": true
@@ -213,84 +228,89 @@
     {
       "inputs": [],
       "name": "getAllProposals",
-      "outputs": [{
-        "components": [{
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint8",
-            "name": "numOfOptions",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minimumStakeValue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "stakedValuePerOption",
-            "type": "uint256[]"
-          },
-          {
-            "components": [{
-                "internalType": "string",
-                "name": "proposalHash",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "voter",
-                "type": "address"
-              },
-              {
-                "internalType": "uint8",
-                "name": "option",
-                "type": "uint8"
-              },
-              {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct Voting.VoteInfo[]",
-            "name": "votes",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "isActive",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isLossVoting",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isAllocationProposal",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "exists",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct Voting.ProposalInfo[]",
-        "name": "proposalInfos",
-        "type": "tuple[]"
-      }],
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "numOfOptions",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minimumStakeValue",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "stakedValuePerOption",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "proposalHash",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "voter",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "option",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Voting.VoteInfo[]",
+              "name": "votes",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isLossVoting",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isAllocationProposal",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Voting.ProposalInfo[]",
+          "name": "proposalInfos",
+          "type": "tuple[]"
+        }
+      ],
       "stateMutability": "view",
       "type": "function",
       "constant": true
     },
     {
-      "inputs": [{
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_ipfsHash",
           "type": "string"
@@ -302,49 +322,55 @@
         }
       ],
       "name": "getVotesForOption",
-      "outputs": [{
-        "components": [{
-            "internalType": "string",
-            "name": "proposalHash",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "voter",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "option",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Voting.VoteInfo[]",
-        "name": "votes",
-        "type": "tuple[]"
-      }],
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "proposalHash",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "voter",
+              "type": "address"
+            },
+            {
+              "internalType": "uint8",
+              "name": "option",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Voting.VoteInfo[]",
+          "name": "votes",
+          "type": "tuple[]"
+        }
+      ],
       "stateMutability": "view",
       "type": "function",
       "constant": true
     },
     {
-      "inputs": [{
-        "internalType": "address",
-        "name": "_user",
-        "type": "address"
-      }],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
       "name": "initialiseUser",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [{
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_ipfsHash",
           "type": "string"
@@ -376,7 +402,8 @@
       "type": "function"
     },
     {
-      "inputs": [{
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_ipfsHash",
           "type": "string"
@@ -388,83 +415,88 @@
         }
       ],
       "name": "setProposalStatus",
-      "outputs": [{
-        "components": [{
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint8",
-            "name": "numOfOptions",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minimumStakeValue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "stakedValuePerOption",
-            "type": "uint256[]"
-          },
-          {
-            "components": [{
-                "internalType": "string",
-                "name": "proposalHash",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "voter",
-                "type": "address"
-              },
-              {
-                "internalType": "uint8",
-                "name": "option",
-                "type": "uint8"
-              },
-              {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct Voting.VoteInfo[]",
-            "name": "votes",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "isActive",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isLossVoting",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isAllocationProposal",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "exists",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct Voting.ProposalInfo",
-        "name": "",
-        "type": "tuple"
-      }],
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "numOfOptions",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minimumStakeValue",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "stakedValuePerOption",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "proposalHash",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "voter",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "option",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Voting.VoteInfo[]",
+              "name": "votes",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isLossVoting",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isAllocationProposal",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Voting.ProposalInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [{
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_ipfsHash",
           "type": "string"
