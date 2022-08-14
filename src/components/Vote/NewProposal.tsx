@@ -44,7 +44,7 @@ const initialValues = {
 async function submitProposal(
   web3: Web3,
   account: string | null,
-  values: Proposal
+  values: Pick<Proposal, "min_stake" | "options" | "type">
 ) {
   if (account !== null) {
     const finalValues = {
@@ -205,7 +205,7 @@ export default function NewProposal() {
                         submitProposal(
                           web3,
                           accounts ? accounts[0] : "",
-                          values as any
+                          values
                         );
                         setSubmitting(false);
                       }}
@@ -223,10 +223,7 @@ export default function NewProposal() {
   );
 }
 
-const CustomTextInput = ({
-  field,
-  ...props
-}: FieldProps<typeof initialValues>) => (
+const CustomTextInput = ({ field, form, ...props }: FieldProps) => (
   <div className="flex flex-col my-2 space-y-1 w-full">
     <div className="flex flex-row space-x-2 items-end">
       <div className="text-gray-500 font-semibold text-2xl">
@@ -234,24 +231,21 @@ const CustomTextInput = ({
         FIXME: props.label
       </div>
       <div className="class">
-        {props.form.errors.title && props.form.touched.title ? (
+        {form.errors.title && form.touched.title ? (
           <div className="text-red-500 font-thin text-sm">required</div>
         ) : null}
       </div>
     </div>
     <input
       type="text"
-      {...(field as any)}
+      {...field}
       {...props}
       className="border border-gray-200 rounded-lg p-2 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
     />
   </div>
 );
 
-const CustomLongTextInput = ({
-  field,
-  ...props
-}: FieldProps<typeof initialValues>) => (
+const CustomLongTextInput = ({ field, form, ...props }: FieldProps) => (
   <div className="flex flex-col my-2 space-y-1">
     <div className="flex flex-row space-x-2 items-end">
       <div className="text-gray-500 font-semibold text-2xl">
@@ -259,28 +253,25 @@ const CustomLongTextInput = ({
         FIXME: props.label
       </div>
       <div className="class">
-        {props.form.errors.content && props.form.touched.content ? (
+        {form.errors.content && form.touched.content ? (
           <div className="text-red-500 font-thin text-sm">required</div>
         ) : null}
       </div>
     </div>
     <textarea
       rows={6}
-      {...(field as any)}
+      {...field}
       {...props}
       className="border border-gray-200 rounded-lg p-2 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent font-medium"
     />
   </div>
 );
 
-const CustomOptionInput = ({
-  field,
-  ...props
-}: FieldProps<typeof initialValues>) => (
+const CustomOptionInput = ({ field, form, ...props }: FieldProps) => (
   <div className="flex flex-col w-full">
     <input
       type="text"
-      {...(field as any)}
+      {...field}
       {...props}
       className="p-2 shadow-sm text-base focus:outline-none focus:border-transparent font-bold text-center"
     />
@@ -289,6 +280,7 @@ const CustomOptionInput = ({
 
 function CustomStakeInput({
   field,
+  form,
   ...props
 }: FieldProps<typeof initialValues["min_stake"]>) {
   let [isOpen, setIsOpen] = useState(false);
@@ -393,9 +385,9 @@ function CustomStakeInput({
                     <button
                       key={stake.value}
                       type="button"
-                      value={stake.value}
-                      {...(field as any)}
+                      {...field}
                       {...props}
+                      value={stake.value}
                       ref={buttonRefs.current[index]}
                       className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
                       onClick={() => setStake(stake)}
@@ -415,6 +407,7 @@ function CustomStakeInput({
 
 function CustomVoteInput({
   field,
+  form,
   ...props
 }: FieldProps<typeof initialValues["type"]>) {
   let [isOpen, setIsOpen] = useState(false);
@@ -517,9 +510,9 @@ function CustomVoteInput({
                     <button
                       key={type.value}
                       type="button"
-                      value={type.value}
-                      {...(field as any)}
+                      {...field}
                       {...props}
+                      value={type.value}
                       ref={buttonRefs.current[index]}
                       className="w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 transition-all focus:ring-2 focus:border-transparent focus:ring-blue-400"
                       onClick={() => setType(type)}
