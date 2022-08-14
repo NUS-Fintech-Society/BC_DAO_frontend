@@ -1,9 +1,10 @@
-import { address, abi } from './contract.json';
+import contract from './contract.json';
 import ipfsClient from 'ipfs-http-client';
 import Web3 from 'web3';
 import type { Contract } from 'web3-eth-contract';
 import { Proposal, ProposalInfo } from './types';
 import { AbiItem } from 'web3-utils';
+
 const IPFS_URL = 'abcdao.infura-ipfs.io';
 
 const ipfs = ipfsClient.create({
@@ -12,7 +13,7 @@ const ipfs = ipfsClient.create({
   protocol: 'https',
 });
 
-let contract: Contract | undefined;
+let currentContract: Contract | undefined;
 
 export async function uploadProposal(text: string) {
   const added = await ipfs.add(text);
@@ -28,10 +29,13 @@ export async function retrieveProposal(
 }
 
 export function getContract(web3: Web3) {
-  if (contract === undefined) {
-    contract = new web3.eth.Contract(abi as AbiItem[], address);
+  if (currentContract === undefined) {
+    currentContract = new web3.eth.Contract(
+      contract.abi as AbiItem[],
+      contract.address
+    );
   }
-  return contract;
+  return currentContract;
 }
 
 export async function getProposalHashes(web3: Web3): Promise<string[]> {
