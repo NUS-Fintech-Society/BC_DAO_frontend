@@ -1,18 +1,18 @@
-import { Fragment, useCallback } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { useLocation } from "react-router";
-import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { ToastContainer, toast } from "react-toastify";
-import { getShortAccountHash, getAccountHash } from "../api/utils";
+import { Fragment, useCallback } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import { useLocation } from 'react-router';
+import { useWeb3 } from '@openzeppelin/network/lib/react';
+import { ToastContainer, toast } from 'react-toastify';
+import { getShortAccountHash, getAccountHash } from '../api/utils';
 
 const navigation = [
-  { name: "Dashboard", href: `${process.env.PUBLIC_URL}#/` },
-  { name: "Vote", href: `${process.env.PUBLIC_URL}#/vote` },
+  { name: 'Dashboard', href: `${process.env.PUBLIC_URL}#/` },
+  { name: 'Vote', href: `${process.env.PUBLIC_URL}#/vote` },
 ];
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function NavBar() {
@@ -31,8 +31,8 @@ export default function NavBar() {
 
   //Toast info
   const copyNotification = () =>
-    toast.info("Copied to clipboard", {
-      position: "bottom-center",
+    toast.info('Copied to clipboard', {
+      position: 'bottom-center',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -69,7 +69,7 @@ export default function NavBar() {
         </div>
       );
     }
-    if (!!networkId && providerName !== "infura") {
+    if (!!networkId && providerName !== 'infura') {
       return (
         <button
           className="block px-4 py-2 w-full text-left"
@@ -110,12 +110,12 @@ export default function NavBar() {
                         href={item.href}
                         className={classNames(
                           location.pathname === item.href
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-600 hover:bg-gray-500 hover:text-white",
-                          "px-3 py-2 rounded-md text-sm font-medium"
+                            ? 'bg-gray-900 text-white'
+                            : 'text-gray-600 hover:bg-gray-500 hover:text-white',
+                          'px-3 py-2 rounded-md text-sm font-medium'
                         )}
                         aria-current={
-                          location.pathname === item.href ? "page" : undefined
+                          location.pathname === item.href ? 'page' : undefined
                         }
                       >
                         {item.name}
@@ -164,8 +164,8 @@ export default function NavBar() {
                           <a
                             href={`${process.env.PUBLIC_URL}#/profile`}
                             className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
+                              active ? 'bg-gray-100' : '',
+                              'block px-4 py-2 text-sm text-gray-700'
                             )}
                           >
                             Profile
@@ -189,8 +189,8 @@ export default function NavBar() {
                         {({ active }) => (
                           <div
                             className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "text-sm text-gray-700"
+                              active ? 'bg-gray-100' : '',
+                              'text-sm text-gray-700'
                             )}
                           >
                             {checkAccount()}
@@ -212,12 +212,12 @@ export default function NavBar() {
                   href={item.href}
                   className={classNames(
                     location.pathname === item.href
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-600 hover:bg-gray-500 hover:text-white",
-                    "block px-3 py-2 rounded-md text-base font-medium"
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:bg-gray-500 hover:text-white',
+                    'block px-3 py-2 rounded-md text-base font-medium'
                   )}
                   aria-current={
-                    location.pathname === item.href ? "page" : undefined
+                    location.pathname === item.href ? 'page' : undefined
                   }
                 >
                   {item.name}

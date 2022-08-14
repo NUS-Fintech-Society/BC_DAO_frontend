@@ -1,8 +1,8 @@
-import { Proposal } from "components/api/types";
-import React from "react";
-import { Link, useRouteMatch } from "react-router-dom";
-import { getShortAccountHash } from "../api/utils";
-import { getCurrentDateTime, getReadableDate } from "./voteUtils";
+import { Proposal } from 'components/api/types';
+import React from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { getShortAccountHash } from '../api/utils';
+import { getCurrentDateTime, getReadableDate } from './voteUtils';
 
 interface VoteListItemProps {
   content?: Proposal;

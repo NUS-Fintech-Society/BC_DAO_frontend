@@ -1,20 +1,20 @@
-import { useWeb3 } from "@openzeppelin/network/lib/react";
-import React, { useState } from "react";
-import { getAccountHash } from "../components/api/utils";
-import NavBar from "../components/Layout/NavBar";
-import HeaderTextFormat from "../components/TextFormats/HeaderTextFormat";
+import { useWeb3 } from '@openzeppelin/network/lib/react';
+import React, { useState } from 'react';
+import { getAccountHash } from '../components/api/utils';
+import NavBar from '../components/Layout/NavBar';
+import HeaderTextFormat from '../components/TextFormats/HeaderTextFormat';
 
-const sample_data = {
+const sampleData = {
   id: 1,
-  nickname: "Jon",
-  email: "test@hmail.com",
-  phone: "987654321",
-  dob: "11/2/1982",
+  nickname: 'Jon',
+  email: 'test@hmail.com',
+  phone: '987654321',
+  dob: '11/2/1982',
   avatar:
-    "https://images.unsplash.com/photo-1576245482660-6fcf7492b4e5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  created_at: "test",
+    'https://images.unsplash.com/photo-1576245482660-6fcf7492b4e5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+  created_at: 'test',
   year: 1,
-  department: "Blockchain",
+  department: 'Blockchain',
 };
 
 export default function Profile() {
@@ -22,7 +22,7 @@ export default function Profile() {
     `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
   );
   const { networkId, accounts } = web3Context;
-  const [page, setPage] = useState("Profile");
+  const [page, setPage] = useState('Profile');
   const accountHash = getAccountHash(accounts, networkId);
 
   function PanelItem({ label }: { label: string }) {
@@ -30,8 +30,8 @@ export default function Profile() {
       <div
         className={
           page === label
-            ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300"
-            : "cursor-pointer hover:text-gray-400"
+            ? 'border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300'
+            : 'cursor-pointer hover:text-gray-400'
         }
         onClick={() => setPage(label)}
       >
@@ -43,10 +43,10 @@ export default function Profile() {
   function PanelLeft() {
     return (
       <div className="relative flex flex-col border border-gray-200 shadow-lg text-center rounded-lg">
-        <div className="text-xl z-10 my-3">{sample_data.nickname}</div>
+        <div className="text-xl z-10 my-3">{sampleData.nickname}</div>
         <img
           className="rounded-full mx-auto w-1/2 h-1/2 z-10"
-          src={sample_data.avatar}
+          src={sampleData.avatar}
           alt=""
         />
         <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
@@ -64,22 +64,19 @@ export default function Profile() {
       <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
         <div className="p-8">
           <HeaderTextFormat
-            header={"Hash ID"}
-            info={accountHash ? accountHash : "Login to see account hash"}
+            header={'Hash ID'}
+            info={accountHash ? accountHash : 'Login to see account hash'}
+          />
+          <HeaderTextFormat header={'Nickname'} info={sampleData['nickname']} />
+          <HeaderTextFormat header={'Email'} info={sampleData['email']} />
+          <HeaderTextFormat header={'Phone'} info={sampleData['phone']} />
+          <HeaderTextFormat
+            header={'Year'}
+            info={'Year ' + sampleData['year']}
           />
           <HeaderTextFormat
-            header={"Nickname"}
-            info={sample_data["nickname"]}
-          />
-          <HeaderTextFormat header={"Email"} info={sample_data["email"]} />
-          <HeaderTextFormat header={"Phone"} info={sample_data["phone"]} />
-          <HeaderTextFormat
-            header={"Year"}
-            info={"Year " + sample_data["year"]}
-          />
-          <HeaderTextFormat
-            header={"Department"}
-            info={sample_data["department"]}
+            header={'Department'}
+            info={sampleData['department']}
           />
         </div>
       </div>
@@ -103,13 +100,13 @@ export default function Profile() {
   }
 
   function PanelRight() {
-    if (page === "Profile") {
+    if (page === 'Profile') {
       return <ProfileTab />;
     }
-    if (page === "Settings") {
+    if (page === 'Settings') {
       return <SettingsTab />;
     }
-    if (page === "History") {
+    if (page === 'History') {
       return <HistoryTab />;
     }
     return <div className="class">Impossible Div</div>;

@@ -1,23 +1,23 @@
-import React from "react";
+import React from 'react';
 
 export default function IndividualLineFormat({
   header,
-  type = "default",
+  type = 'default',
 }: {
   header: String;
-  type?: "default" | "first" | "last";
+  type?: 'default' | 'first' | 'last';
 }) {
-  if (type === "first") {
+  if (type === 'first') {
     return (
       <div className="p-4 px-6 text-lg font-semibold border-b">{header}</div>
     );
   }
-  if (type === "default") {
+  if (type === 'default') {
     return (
       <div className="p-4 px-6 text-lg font-semibold border-b">{header}</div>
     );
   }
-  if (type === "last") {
+  if (type === 'last') {
     return <div className="p-4 px-6 text-lg font-semibold">{header}</div>;
   }
   return null;

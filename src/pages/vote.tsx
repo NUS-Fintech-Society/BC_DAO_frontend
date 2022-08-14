@@ -1,24 +1,24 @@
-import React, { useState } from "react";
-import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
-import NavBar from "../components/Layout/NavBar";
-import VoteList from "../components/Vote/VoteList";
-import VoteDetail from "../components/Vote/VoteDetail";
-import NewProposal from "../components/Vote/NewProposal";
-import HeaderTextFormat from "../components/TextFormats/HeaderTextFormat";
-import IndividualLineFormat from "../components/TextFormats/IndividualLineFormat";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState } from 'react';
+import { Link, useRouteMatch, Switch, Route } from 'react-router-dom';
+import NavBar from '../components/Layout/NavBar';
+import VoteList from '../components/Vote/VoteList';
+import VoteDetail from '../components/Vote/VoteDetail';
+import NewProposal from '../components/Vote/NewProposal';
+import HeaderTextFormat from '../components/TextFormats/HeaderTextFormat';
+import IndividualLineFormat from '../components/TextFormats/IndividualLineFormat';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function Vote() {
   let { path, url } = useRouteMatch();
-  const [page, setPage] = useState("Proposals");
+  const [page, setPage] = useState('Proposals');
 
   function PanelItem({ label }: { label: string }) {
     return (
       <div
         className={
           page === label
-            ? "border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300"
-            : "cursor-pointer hover:text-gray-400"
+            ? 'border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300'
+            : 'cursor-pointer hover:text-gray-400'
         }
         onClick={() => setPage(label)}
       >
@@ -83,14 +83,14 @@ export default function Vote() {
   }
 
   function PanelRight() {
-    if (page === "Proposals") {
+    if (page === 'Proposals') {
       return (
         <div className="w-full">
           <VoteList />
         </div>
       );
     }
-    if (page === "About") {
+    if (page === 'About') {
       return <AboutTab />;
     }
     return null;

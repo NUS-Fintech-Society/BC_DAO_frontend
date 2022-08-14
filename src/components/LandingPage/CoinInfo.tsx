@@ -1,9 +1,11 @@
-import React from "react";
+import React from 'react';
 
 export default function CoinInfo() {
   return (
     <div className="p-8">
-      <header className="text-center text-xl p-4 font-semibold">Info about our coin</header>
+      <header className="text-center text-xl p-4 font-semibold">
+        Info about our coin
+      </header>
       <div className="text-center m-auto max-w-prose">
         Lorem Ipsum is simply dummy text of the printing and typesetting
         industry. Lorem Ipsum has been the industry's standard dummy text ever

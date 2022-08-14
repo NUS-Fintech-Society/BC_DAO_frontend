@@ -1,12 +1,12 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { useWeb3 } from "@openzeppelin/network/lib/react";
-import { Proposal, ProposalInfo } from "components/api/types";
-import React, { Fragment, useEffect, useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
-import { toast } from "react-toastify";
-import { getProposalInfo, retrieveProposal, sendVote } from "../api/api";
-import { getShortAccountHash } from "../api/utils";
-import { getReadableDate } from "./voteUtils";
+import { Dialog, Transition } from '@headlessui/react';
+import { useWeb3 } from '@openzeppelin/network/lib/react';
+import { Proposal, ProposalInfo } from 'components/api/types';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { getProposalInfo, retrieveProposal, sendVote } from '../api/api';
+import { getShortAccountHash } from '../api/utils';
+import { getReadableDate } from './voteUtils';
 
 export default function VoteDetail() {
   //Address routing
@@ -51,27 +51,27 @@ export default function VoteDetail() {
 
   //Amount Toasts
   const amountError = () =>
-    toast.warn("Amount must be greater than min stake value", {
-      position: "bottom-center",
+    toast.warn('Amount must be greater than min stake value', {
+      position: 'bottom-center',
       autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      toastId: "amountError",
+      toastId: 'amountError',
     });
 
   const confirmationMessage = () =>
-    toast.success("🦊 Confirm on MetaMask!", {
-      position: "bottom-center",
+    toast.success('🦊 Confirm on MetaMask!', {
+      position: 'bottom-center',
       autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      toastId: "confirmationMessage",
+      toastId: 'confirmationMessage',
     });
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -99,14 +99,14 @@ export default function VoteDetail() {
 
   function getType() {
     if (proposalContent) {
-      if (proposalContent.type === "loss") {
-        return "Loss Voting";
+      if (proposalContent.type === 'loss') {
+        return 'Loss Voting';
       }
-      if (proposalContent.type === "allocation") {
-        return "Allocation Proposal";
+      if (proposalContent.type === 'allocation') {
+        return 'Allocation Proposal';
       }
     }
-    return "unknown";
+    return 'unknown';
   }
 
   return (
@@ -157,7 +157,7 @@ export default function VoteDetail() {
                     className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-indigo-600 bg-white outline-none m-1 hover:m-0  border border-indigo-600 hover:border-indigo-800 hover:text-black hover:bg-blue-100 transition-all
                     ${
                       index === selected
-                        ? "ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50"
+                        ? 'ring-2 border-transparent ring-blue-500 outline-none border m-0 bg-indigo-50'
                         : null
                     }`}
                     onClick={() => setSelected(index)}
@@ -168,8 +168,8 @@ export default function VoteDetail() {
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
                     isSelected() && isLoggedIn()
-                      ? "focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer"
-                      : "cursor-not-allowed"
+                      ? 'focus:outline-none hover:m-0 focus:m-0 hover:border-4 focus:border-4 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer'
+                      : 'cursor-not-allowed'
                   }`}
                   onClick={() => {
                     isSelected() && isLoggedIn() && openModal();
@@ -230,7 +230,7 @@ export default function VoteDetail() {
                               ? `You are voting for: ${
                                   proposalContent.options[selected!].label
                                 }`
-                              : "Please choose an option!"}
+                              : 'Please choose an option!'}
                           </div>
                           <div className="flex flex-row py-2 items-center space-x-2 ">
                             <input
@@ -307,7 +307,7 @@ export default function VoteDetail() {
                 Current Results
               </div>
               {proposalInfo !== null &&
-                (proposalContent.type === "loss" ? (
+                (proposalContent.type === 'loss' ? (
                   <CurrentResultsLoss
                     proposalContent={proposalContent}
                     proposalInfo={proposalInfo}

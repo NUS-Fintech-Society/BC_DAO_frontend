@@ -1,6 +1,6 @@
 {
-  "name": "blockchain",
-  "homepage": "https://NUS-Fintech-Society.github.io/BC_DAO_frontend",
+  "name": "abcdao",
+  "homepage": "https://nus-fintech-society.github.io/BC_DAO_frontend/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -31,8 +31,10 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
+    "format": "npx prettier --write \"src/**/*.{ts,tsx,.css}\"",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -63,7 +65,9 @@
     "autoprefixer": "^9.8.6",
     "gh-pages": "^3.2.3",
     "postcss": "^7.0.35",
+    "prettier": "^2.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "husky": "^8.0.0"
   }
 }

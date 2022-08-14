@@ -1,9 +1,9 @@
-import React from "react";
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
-import Home from "./pages";
-import Vote from "./pages/vote";
-import Profile from "./pages/profile";
-import "react-toastify/dist/ReactToastify.css";
+import React from 'react';
+import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
+import Home from './pages';
+import Vote from './pages/vote';
+import Profile from './pages/profile';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (

@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 
 export default function HeaderTextFormat({
   header,
@@ -8,8 +8,8 @@ export default function HeaderTextFormat({
   info: string;
 }) {
   const copyNotification = () =>
-    toast.info("Copied to clipboard", {
-      position: "bottom-center",
+    toast.info('Copied to clipboard', {
+      position: 'bottom-center',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,

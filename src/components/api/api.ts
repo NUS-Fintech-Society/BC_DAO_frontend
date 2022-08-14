@@ -1,15 +1,15 @@
-import { address, abi } from "./contract.json";
-import ipfsClient from "ipfs-http-client";
-import Web3 from "web3";
-import type { Contract } from "web3-eth-contract";
-import { Proposal, ProposalInfo } from "./types";
-import { AbiItem } from "web3-utils";
-const IPFS_URL = "abcdao.infura-ipfs.io";
+import { address, abi } from './contract.json';
+import ipfsClient from 'ipfs-http-client';
+import Web3 from 'web3';
+import type { Contract } from 'web3-eth-contract';
+import { Proposal, ProposalInfo } from './types';
+import { AbiItem } from 'web3-utils';
+const IPFS_URL = 'abcdao.infura-ipfs.io';
 
 const ipfs = ipfsClient.create({
   host: IPFS_URL,
   port: 5001,
-  protocol: "https",
+  protocol: 'https',
 });
 
 let contract: Contract | undefined;
@@ -82,7 +82,7 @@ export async function createProposal(
   account: string | null,
   values: Pick<
     Proposal,
-    "numOfOptions" | "min_stake" | "isLossVoting" | "isAllocationProposal"
+    'numOfOptions' | 'min_stake' | 'isLossVoting' | 'isAllocationProposal'
   >
 ) {
   const contract = getContract(web3);
@@ -91,15 +91,15 @@ export async function createProposal(
     return await contract.methods
       .createProposal(
         ipfsHash,
-        values["numOfOptions"],
-        values["min_stake"],
-        values["isLossVoting"],
-        values["isAllocationProposal"]
+        values['numOfOptions'],
+        values['min_stake'],
+        values['isLossVoting'],
+        values['isAllocationProposal']
       )
       .send({ from: account });
   } catch (err) {
     console.log(err);
-    console.log("Unsuccessful setting of Proposal Status");
+    console.log('Unsuccessful setting of Proposal Status');
     return false;
   }
 }
@@ -116,7 +116,7 @@ export async function setProposalStatus(
       .setProposalStatus(ipfsHash, isActive)
       .send({ from: account });
   } catch (err) {
-    console.log("Unsuccessful setting of Proposal Status");
+    console.log('Unsuccessful setting of Proposal Status');
   }
 }
 
@@ -134,6 +134,6 @@ export async function sendVote(
       .vote(ipfsHash, optionIndex, amt)
       .send({ from: account });
   } catch (err) {
-    console.log("Unsuccessful voting on proposal");
+    console.log('Unsuccessful voting on proposal');
   }
 }
