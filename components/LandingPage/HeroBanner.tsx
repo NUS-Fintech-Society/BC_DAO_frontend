@@ -5,7 +5,7 @@ export default function HeroBanner() {
       <a
         href="https://fintechsociety.comp.nus.edu.sg/"
         target={'_blank'}
-        rel="noopener"
+        rel="noopener noreferrer"
       >
         <button className="text-base bg-black rounded-md font-semibold text-white pt-2.5 pb-2.5 pl-5 pr-5 mt-16 hover:bg-gray-600 transition-all">
           Click here

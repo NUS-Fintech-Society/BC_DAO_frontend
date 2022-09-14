@@ -1,4 +1,4 @@
-import BlockchainDescription from '../components/LandingPage/BlockChainDescription';
+import BlockchainDescription from '../components/LandingPage/BlockchainDescription';
 import CoinInfo from '../components/LandingPage/CoinInfo';
 import HeroBanner from '../components/LandingPage/HeroBanner';
 

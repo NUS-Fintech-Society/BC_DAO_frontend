@@ -33,12 +33,6 @@
     "deploy": "gh-pages -d build",
     "prepare": "husky install"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -54,10 +48,12 @@
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "@types/node": "^18.7.3",
-    "@types/react": "^18.0.17",
+    "@types/react": "^18.0.20",
     "@types/react-datepicker": "^4.4.2",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.8",
+    "eslint": "^8.23.1",
+    "eslint-config-next": "12.3.0",
     "gh-pages": "^3.2.3",
     "husky": "^8.0.0",
     "postcss": "^8.4.16",
