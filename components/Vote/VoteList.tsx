@@ -1,14 +1,13 @@
 import { useWeb3 } from '@openzeppelin/network/lib/react';
 import { Proposal } from '../api/types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getProposalHashes, retrieveProposal } from '../api/api';
 import VoteListItem from './VoteListItem';
 
 export default function VoteList() {
-  const web3Context = useWeb3(
+  const { lib: web3 } = useWeb3(
     `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
   );
-  const { lib: web3 } = web3Context;
 
   const [proposalList, setProposalList] = useState<Proposal[]>([]);
   const [proposalToShow, setProposalToShow] = useState(0);

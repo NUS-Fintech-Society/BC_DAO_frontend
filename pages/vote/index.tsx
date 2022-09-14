@@ -2,94 +2,24 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import HeaderTextFormat from '../../components/TextFormats/HeaderTextFormat';
-import IndividualLineFormat from '../../components/TextFormats/IndividualLineFormat';
+import VoteAboutTab from '../../components/Vote/VoteAboutTab';
 import VoteList from '../../components/Vote/VoteList';
+import { VotePanelLeft } from '../../components/Vote/VotePanelLeft';
 
 export default function Vote() {
-  const [page, setPage] = useState('Proposals');
+  const [rightPanelName, setRightPanelName] = useState('Proposals');
   const router = useRouter();
 
-  function PanelItem({ label }: { label: string }) {
-    return (
-      <div
-        className={
-          page === label
-            ? 'border-r-4 border-indigo-500 cursor-pointer hover:text-gray-400 hover:border-indigo-300'
-            : 'cursor-pointer hover:text-gray-400'
-        }
-        onClick={() => setPage(label)}
-      >
-        {label}
-      </div>
-    );
-  }
-
-  function PanelLeft() {
-    return (
-      <div className="relative flex flex-col border border-gray-200 shadow-lg text-center rounded-lg">
-        <div className="text-xl z-10 my-3">ABCDao</div>
-        {/* placeholder image */}
-        <img
-          className="rounded-full mx-auto w-1/2 h-1/2 z-10"
-          src="https://rehabconceptspt.com/wp-content/uploads/2016/06/placeholder-640-square.jpg"
-          alt=""
-          placeholder="placeholder"
-        />
-        <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
-        <div className="flex flex-col space-y-3 z-10 text-left py-4 px-6 w-full text-lg font-medium">
-          <PanelItem label="Proposals" />
-          <div className="cursor-pointer hover:text-gray-400">
-            <Link href={`${router.pathname}/new-proposal`}>New Proposal</Link>
-          </div>
-          <PanelItem label="About" />
-        </div>
-      </div>
-    );
-  }
-
-  function AboutTab() {
-    return (
-      <>
-        <div className="flex flex-col w-full space-y-10">
-          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-            <div className="p-8">
-              <HeaderTextFormat header="About" info="ABCDao" />
-              <HeaderTextFormat header="NetWork" info="Ethereum Mainnet" />
-              <HeaderTextFormat header="Proposal Validation" info="basic" />
-              <HeaderTextFormat header="Proposal Threshold" info="infinite" />
-              <HeaderTextFormat header="Strategie(s)" info="erc20-balance-of" />
-            </div>
-          </div>
-          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-            <IndividualLineFormat header="Admins" />
-            <IndividualLineFormat header="John" />
-            <IndividualLineFormat header="Mark" />
-            <IndividualLineFormat header="Sally" />
-            <IndividualLineFormat header="Tim" type="last" />
-          </div>
-
-          <div className="flex flex-col border border-gray-100 shadow-lg rounded-lg w-full">
-            <IndividualLineFormat header="Developers" />
-            <IndividualLineFormat header="Jun Xiong" />
-            <IndividualLineFormat header="Adithya Narayan" />
-            <IndividualLineFormat header="Bryan Woo" type="last" />
-          </div>
-        </div>
-      </>
-    );
-  }
-
   function PanelRight() {
-    if (page === 'Proposals') {
+    if (rightPanelName === 'Proposals') {
       return (
         <div className="w-full">
           <VoteList />
         </div>
       );
     }
-    if (page === 'About') {
-      return <AboutTab />;
+    if (rightPanelName === 'About') {
+      return <VoteAboutTab />;
     }
     return null;
   }
@@ -110,7 +40,10 @@ export default function Vote() {
           </div>
           <div className="hidden lg:flex flex-row space-x-6 w-full">
             <div className="w-1/3">
-              <PanelLeft />
+              <VotePanelLeft
+                rightPanelName={rightPanelName}
+                setRightPanelName={setRightPanelName}
+              />
             </div>
             <PanelRight />
           </div>
