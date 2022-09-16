@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import VotePanelItem from './VotePanelItem';
 
 interface VotePanelLeftProps {
@@ -11,6 +11,7 @@ export function VotePanelLeft({
   rightPanelName,
   setRightPanelName,
 }: VotePanelLeftProps) {
+  const router = useRouter();
   return (
     <div className="relative flex flex-col border border-gray-200 shadow-lg text-center rounded-lg">
       <div className="text-xl z-10 my-3">ABCDao</div>
@@ -18,7 +19,7 @@ export function VotePanelLeft({
       <img
         className="rounded-full mx-auto w-1/2 h-1/2 z-10"
         src="https://rehabconceptspt.com/wp-content/uploads/2016/06/placeholder-640-square.jpg"
-        alt=""
+        alt="DAO Image"
         placeholder="placeholder"
       />
       <div className="absolute bg-gray-100 inset-x-0 bottom-0 h-3/5 rounded-b-lg"></div>
