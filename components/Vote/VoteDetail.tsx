@@ -1,36 +1,41 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { useWeb3 } from '@openzeppelin/network/lib/react';
 import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getProposalInfo, retrieveProposal, sendVote } from '../api/api';
+import {
+  getProposalInfo,
+  getWalletAuthenticated,
+  getWeb3Provider,
+  retrieveProposal,
+  sendVote,
+} from '../api/api';
 import { Proposal, ProposalInfo } from '../api/types';
 import { getShortAccountHash } from '../api/utils';
 import { getReadableDate } from './voteUtils';
 
 export default function VoteDetail({ ipfsHash }: { ipfsHash: string }) {
-  //Web3 API Itialization
-  const web3Context = useWeb3(
-    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
-  );
-  const { lib: web3, accounts } = web3Context;
-
-  //Getting proposal content
+  const [authenticated, setAuthenticated] = useState(false);
+  // Getting proposal content
   const [proposalContent, setProposalContent] = useState<Proposal | null>(null);
   const [proposalInfo, setProposalInfo] = useState<ProposalInfo | null>(null);
 
   useEffect(() => {
+    getWalletAuthenticated().then((isAuthenticated) =>
+      setAuthenticated(isAuthenticated)
+    );
+  }, []);
+
+  useEffect(() => {
     async function getProposal() {
-      console.log(ipfsHash);
       await retrieveProposal(ipfsHash).then((proposal) => {
         setProposalContent(proposal);
       });
-      await getProposalInfo(web3, ipfsHash).then((info) => {
+      await getProposalInfo(ipfsHash).then((info) => {
         setProposalInfo(info);
       });
     }
     getProposal();
-  }, [ipfsHash, web3]);
+  }, [ipfsHash]);
 
   //Model Handling
   let [isOpen, setIsOpen] = useState(false);
@@ -74,10 +79,10 @@ export default function VoteDetail({ ipfsHash }: { ipfsHash: string }) {
   const [selected, setSelected] = useState<number | null>(null);
 
   async function submitVote() {
+    const provider = getWeb3Provider();
     if (selected !== null && amount !== null && typeof ipfsHash === 'string') {
       const vote = await sendVote(
-        web3,
-        accounts && accounts[0],
+        provider !== undefined ? await provider.getSigner().getAddress() : null,
         ipfsHash,
         selected,
         +amount
@@ -88,10 +93,6 @@ export default function VoteDetail({ ipfsHash }: { ipfsHash: string }) {
 
   function isSelected() {
     return selected !== undefined && selected !== null;
-  }
-
-  function isLoggedIn() {
-    return accounts && accounts.length > 0;
   }
 
   function getType() {
@@ -165,12 +166,12 @@ export default function VoteDetail({ ipfsHash }: { ipfsHash: string }) {
                 ))}
                 <button
                   className={`w-full rounded-full items-center px-5 py-3 text-md font-bold text-white outline-none bg-yellow-500 m-1 border border-red-600 transition-all ${
-                    isSelected() && isLoggedIn()
+                    isSelected() && authenticated
                       ? 'focus:outline-none hover:border-1 focus:border-1 hover:border-red-800 hover:text-black hover:bg-yellow-400 focus:border-purple-200 cursor-pointer'
                       : 'cursor-not-allowed'
                   }`}
                   onClick={() => {
-                    isSelected() && isLoggedIn() && openModal();
+                    isSelected() && authenticated && openModal();
                   }}
                 >
                   Vote

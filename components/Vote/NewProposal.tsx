@@ -1,5 +1,4 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { useWeb3 } from '@openzeppelin/network/lib/react';
 import {
   Field,
   FieldArray,
@@ -8,14 +7,14 @@ import {
   Formik,
   useFormikContext,
 } from 'formik';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
-import { createProposal } from '../api/api';
+import { createProposal, getWalletAddress } from '../api/api';
 import { getCurrentDateTime, showCurrentDate } from './voteUtils';
 import DatePicker from 'react-datepicker';
-import Web3 from 'web3';
 import Link from 'next/link';
 import { Proposal } from '../api/types';
+import { toast } from 'react-toastify';
 
 const formTypes = [
   { label: 'Loss Voting', value: 'loss' },
@@ -42,7 +41,6 @@ const initialValues = {
 };
 
 async function submitProposal(
-  web3: Web3,
   account: string | null,
   values: Pick<Proposal, 'min_stake' | 'options' | 'type'>
 ) {
@@ -56,7 +54,7 @@ async function submitProposal(
       userId: account,
     };
 
-    return createProposal(web3, account, finalValues);
+    return createProposal(account, finalValues);
   }
 }
 
@@ -67,22 +65,23 @@ const proposalSchema = Yup.object().shape({
 });
 
 export default function NewProposal() {
-  const web3Context = useWeb3(
-    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
-  );
-  const { lib: web3, accounts } = web3Context;
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    getWalletAddress().then((addr) => setAddress(addr));
+  }, []);
 
   //Toast for error messages
-  // const errorNotification = (error) =>
-  //   toast.info(error, {
-  //     position: "bottom-center",
-  //     autoClose: 3000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: false,
-  //     draggable: true,
-  //     progress: undefined,
-  //   });
+  const errorNotification = (error: any) =>
+    toast.info(error, {
+      position: 'bottom-center',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+    });
 
   return (
     <div className="w-full h-full">
@@ -101,10 +100,10 @@ export default function NewProposal() {
           initialValues={initialValues}
           validationSchema={proposalSchema}
           validateOnMount={true}
-          onSubmit={(values, { resetForm }) => {
-            console.log(JSON.stringify(values));
-            // submitProposal(web3, accounts[0], values);
-            // actions.setSubmitting(false);
+          onSubmit={(values, { resetForm, setSubmitting }) => {
+            // console.log(JSON.stringify(values));
+            submitProposal(address, values);
+            setSubmitting(false);
             resetForm();
           }}
         >
@@ -202,12 +201,10 @@ export default function NewProposal() {
                           : `w-full rounded-full items-center px-5 py-3 text-sm font-medium text-indigo-600 bg-white outline-none focus:outline-none m-1 hover:m-0 focus:m-0 border border-indigo-600 hover:border-4 focus:border-4 hover:border-indigo-800 hover:text-black hover:bg-indigo-100 focus:border-purple-200 transition-all`
                       }
                       onClick={() => {
-                        submitProposal(
-                          web3,
-                          accounts ? accounts[0] : '',
-                          values
-                        );
-                        setSubmitting(false);
+                        getWalletAddress().then((address) => {
+                          submitProposal(address || '', values);
+                          setSubmitting(false);
+                        });
                       }}
                     >
                       Publish

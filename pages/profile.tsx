@@ -1,5 +1,5 @@
-import { useWeb3 } from '@openzeppelin/network/lib/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getWalletAddress } from '../components/api/api';
 import { getAccountHash } from '../components/api/utils';
 import NavBar from '../components/Layout/NavBar';
 import HeaderTextFormat from '../components/TextFormats/HeaderTextFormat';
@@ -18,12 +18,12 @@ const sampleData = {
 };
 
 export default function Profile() {
-  const web3Context = useWeb3(
-    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
-  );
-  const { networkId, accounts } = web3Context;
   const [page, setPage] = useState('Profile');
-  const accountHash = getAccountHash(accounts, networkId);
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    getWalletAddress().then((addr) => setAddress(addr));
+  }, []);
 
   function PanelItem({ label }: { label: string }) {
     return (
@@ -65,7 +65,7 @@ export default function Profile() {
         <div className="p-8">
           <HeaderTextFormat
             header={'Hash ID'}
-            info={accountHash ? accountHash : 'Login to see account hash'}
+            info={address ? address : 'Login to see account hash'}
           />
           <HeaderTextFormat header={'Nickname'} info={sampleData['nickname']} />
           <HeaderTextFormat header={'Email'} info={sampleData['email']} />

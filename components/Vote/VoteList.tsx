@@ -1,33 +1,29 @@
-import { useWeb3 } from '@openzeppelin/network/lib/react';
 import { Proposal } from '../api/types';
 import { useEffect, useState } from 'react';
 import { getProposalHashes, retrieveProposal } from '../api/api';
 import VoteListItem from './VoteListItem';
 
 export default function VoteList() {
-  const { lib: web3 } = useWeb3(
-    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
-  );
-
   const [proposalList, setProposalList] = useState<Proposal[]>([]);
   const [proposalToShow, setProposalToShow] = useState(0);
 
   useEffect(() => {
-    async function getAllProposals() {
-      await getProposalHashes(web3).then((proposalData) => {
+    if (proposalList.length === 0) {
+      getProposalHashes().then((proposalData: string[]) => {
         setProposalToShow(proposalData.length);
-        proposalData.forEach(async (element) => {
-          if (element) {
-            await retrieveProposal(element).then((data) => {
-              const new_data = { ...data, ipfs: element };
-              setProposalList((prevState) => [...prevState, new_data]);
-            });
-          }
-        });
+        if (proposalData.length) {
+          proposalData.forEach(async (element) => {
+            if (element) {
+              await retrieveProposal(element).then((data) => {
+                const new_data = { ...data, ipfs: element };
+                setProposalList((prevState) => [...prevState, new_data]);
+              });
+            }
+          });
+        }
       });
     }
-    getAllProposals();
-  }, [web3]);
+  }, []);
 
   return (
     <div className="flex flex-col space-y-4">

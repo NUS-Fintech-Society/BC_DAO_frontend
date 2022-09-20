@@ -1,11 +1,11 @@
-import { Fragment, useCallback } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
-import { useWeb3 } from '@openzeppelin/network/lib/react';
-import { ToastContainer, toast } from 'react-toastify';
-import { getShortAccountHash, getAccountHash } from '../api/utils';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { Fragment, useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import { getWalletAddress, getWeb3Provider } from '../api/api';
+import { getShortAccountHash } from '../api/utils';
 
 const navigation = [
   { name: 'Dashboard', href: `/` },
@@ -17,20 +17,34 @@ function classNames(...classes: string[]) {
 }
 
 export default function NavBar() {
-  //Web 3 Init and info
-  const web3Context = useWeb3(
-    `wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`
-  );
-  const { networkId, accounts, providerName } = web3Context;
-
-  const requestAccess = useCallback(
-    () => web3Context.requestAuth(),
-    [web3Context]
-  );
   const router = useRouter();
-  const accountHash = getAccountHash(accounts, networkId);
+  const [address, setAddress] = useState('');
 
-  //Toast info
+  useEffect(() => {
+    getWalletAddress().then((address) => setAddress(address));
+  }, []);
+
+  const login = async () => {
+    const provider = getWeb3Provider();
+    if (provider !== undefined) {
+      await provider.send('eth_requestAccounts', []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      setAddress(address || '');
+    }
+  };
+
+  const logout = async () => {
+    setAddress('');
+    const provider = getWeb3Provider();
+    if (provider !== undefined) {
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      setAddress(address || '');
+    }
+  };
+
+  // Toast info
   const copyNotification = () =>
     toast.info('Copied to clipboard', {
       position: 'bottom-center',
@@ -43,18 +57,18 @@ export default function NavBar() {
     });
 
   function checkAccount() {
-    if (accounts && accounts.length) {
+    if (address !== '') {
       return (
         <div
           className="block px-4 py-2 w-full text-left cursor-pointer"
           onClick={() => {
             copyNotification();
-            navigator.clipboard.writeText(accountHash);
+            navigator.clipboard.writeText(address);
           }}
         >
           <span> Logged in as </span>
           <span className="font-semibold text-gray-500">
-            {getShortAccountHash(accounts[0])}
+            {getShortAccountHash(address)}
           </span>
           <ToastContainer
             position="bottom-center"
@@ -70,16 +84,11 @@ export default function NavBar() {
         </div>
       );
     }
-    if (!!networkId && providerName !== 'infura') {
-      return (
-        <button
-          className="block px-4 py-2 w-full text-left"
-          onClick={requestAccess}
-        >
-          Login
-        </button>
-      );
-    }
+    return (
+      <button className="block px-4 py-2 w-full text-left" onClick={login}>
+        Login
+      </button>
+    );
   }
 
   return (
@@ -128,7 +137,7 @@ export default function NavBar() {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Account Hash */}
                 <div className="text-gray-400 font-semibold text-sm">
-                  {checkAccount() ? checkAccount() : null}
+                  {checkAccount()}
                 </div>
 
                 {/* Bell notifications */}
@@ -176,19 +185,19 @@ export default function NavBar() {
                           </div>
                         )}
                       </Menu.Item>
-                      {/* <Menu.Item>
+                      <Menu.Item>
                         {({ active }) => (
                           <a
                             href="/setting"
                             className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
+                              active ? 'bg-gray-100' : '',
+                              'block px-4 py-2 text-sm text-gray-700'
                             )}
                           >
                             Settings
                           </a>
                         )}
-                      </Menu.Item> */}
+                      </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
                           <div
